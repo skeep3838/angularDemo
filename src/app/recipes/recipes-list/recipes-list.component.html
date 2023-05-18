@@ -6,5 +6,6 @@
 <div class="row">
     <app-recipes-item *ngFor="let recipeEl of recipes" 
         [recipeForItem]="recipeEl"
+        (reciprSelected) = "onSelectRecipe(recipeEl)"
         ></app-recipes-item>
 </div>
