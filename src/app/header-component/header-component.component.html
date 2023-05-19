@@ -14,7 +14,7 @@
       </li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
-      <li class="nav-item dropdown">
+      <li class="dropdown" appDropdown>
         <a class="nav-link dropdown-toggle" href="#" role="button">
           Manage
         </a>
@@ -24,5 +24,15 @@
         </div>
       </li>
     </ul>
+    <div class="dropdown">
+      <button class="btn btn-secondary dropdown-toggle" appDropdown type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        Dropdown button
+      </button>
+      <ul class="dropdown-menu" appDropdown>
+        <li><a class="dropdown-item" href="#">Action</a></li>
+        <li><a class="dropdown-item" href="#">Another action</a></li>
+        <li><a class="dropdown-item" href="#">Something else here</a></li>
+      </ul>
+    </div>
   </div>
 </nav>
