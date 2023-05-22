@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Recipe } from '../recipe-model';
 import { Ingerdient } from 'src/app/shared/ingerdient.model';
 import { RecipesService } from '../recipes-service';
@@ -10,16 +10,16 @@ import { RecipesService } from '../recipes-service';
   styleUrls: ['./recipes-detail.component.css']
 })
 export class RecipesDetailComponent implements OnInit {
-
   recipeDetail: Recipe;
   id: number;
 
   constructor(private recipesService: RecipesService,
-    private router: ActivatedRoute) { }
+    private route: ActivatedRoute,
+    private router: Router) { }
 
   ngOnInit() {
     // const id = this.router.snapshot.params['ip'];
-    this.router.params.subscribe((params: Params) => {
+    this.route.params.subscribe((params: Params) => {
       this.id = +params['id']; //+ 好為自動轉型成number
       this.recipeDetail = this.recipesService.getById(this.id);
     });
@@ -27,5 +27,10 @@ export class RecipesDetailComponent implements OnInit {
 
   onAddToShoppingList(ingerdients: Ingerdient[]) {
     this.recipesService.addIngerdientToShoppingList(ingerdients);
+  }
+
+  onEditRecipe() {
+    this.router.navigate(['edit'], {relativeTo: this.route});
+    // this.router.navigate(['../', this.id, 'edit'], { relativeTo: this.route });
   }
 }
