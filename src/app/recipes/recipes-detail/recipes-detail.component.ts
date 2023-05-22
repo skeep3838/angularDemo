@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { ActivatedRoute, Params } from '@angular/router';
 import { Recipe } from '../recipe-model';
 import { Ingerdient } from 'src/app/shared/ingerdient.model';
 import { RecipesService } from '../recipes-service';
@@ -10,10 +11,18 @@ import { RecipesService } from '../recipes-service';
 })
 export class RecipesDetailComponent implements OnInit {
 
-  @Input() recipeDetail: Recipe;
-  constructor(private recipesService: RecipesService) { }
+  recipeDetail: Recipe;
+  id: number;
+
+  constructor(private recipesService: RecipesService,
+    private router: ActivatedRoute) { }
 
   ngOnInit() {
+    // const id = this.router.snapshot.params['ip'];
+    this.router.params.subscribe((params: Params) => {
+      this.id = +params['id']; //+ 好為自動轉型成number
+      this.recipeDetail = this.recipesService.getById(this.id);
+    });
   }
 
   onAddToShoppingList(ingerdients: Ingerdient[]) {

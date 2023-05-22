@@ -1,10 +1,8 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <app-header-component (featureSelected)="onNavigate($event)"></app-header-component>
-            <app-recipes *ngIf="topBarRoute === 'recipe'"></app-recipes>
-            <app-shopping-list *ngIf="topBarRoute === 'shoppingList'" (addItem)="onUpdateItem($event)"></app-shopping-list>
+            <app-header-component></app-header-component>
+            <router-outlet></router-outlet>
         </div>
     </div>
 </div>
-<!-- <router-outlet></router-outlet> -->
