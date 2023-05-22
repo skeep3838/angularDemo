@@ -8,7 +8,7 @@
         <h1>{{recipeDetail.name}}</h1>
     </div>
 </div>
-<div class="row">
+<!-- <div class="row">
     <div class="col-xs-12">
         <div class="btn-group">
             <button type="button" class="btn btn-primary dropdown-toggle" appDropdown>
@@ -21,10 +21,26 @@
             </ul>
         </div>
     </div>
+</div> -->
+<div class="row">
+    <ul>
+        <li><a href="#" (click)="onAddToShoppingList(recipeDetail.ingerdients)">To Shopping List</a></li>
+        <li><a href="#">Edit</a></li>
+        <li><a href="#">Delete</a></li>
+    </ul>
 </div>
 <div class="row">
     <div class="col-xs-12">
         {{recipeDetail.description}}
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12">
+        <ul class="list-group">
+            <li class="list-group-item" *ngFor="let ingerdientEl of recipeDetail.ingerdients">
+                {{ingerdientEl.name}} - {{ingerdientEl.amount}}
+            </li>
+        </ul>
     </div>
 </div>
 <div class="row">
