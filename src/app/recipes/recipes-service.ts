@@ -3,6 +3,13 @@ import { Recipe } from './recipe-model';
 import { Ingerdient } from '../shared/ingerdient.model';
 import { ShoppingListService } from '../shopping-list/shopping-list.service';
 
+// 'self':表示该组件或类将直接被注入到其所在的模块的提供者中。
+// 'root':表示该组件或类将被注入到 Angular 的根提供者中。
+// 'component':表示该组件或类将被注入到一个组件的提供者中。
+// 'service':表示该组件或类将被注入到一个服务的提供者中。
+// 'query':表示该组件或类将被注入到一个查询的提供者中。
+// 'static':表示该组件或类将被注入到一个静态提供者中。
+// 需要注意的是，providedIn 属性的值必须是一个大写字母或下划线开头的字符串，并且只能包含字母、数字和下划线。如果 providedIn 属性的值不被正确设置，则 Angular 将抛出一个错误。
 @Injectable()
 export class RecipesService {
   recipeSelected = new EventEmitter<Recipe>();
