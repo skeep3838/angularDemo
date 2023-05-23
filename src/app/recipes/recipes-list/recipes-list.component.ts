@@ -10,8 +10,8 @@ import { RecipesService } from '../recipes-service';
 })
 export class RecipesListComponent implements OnInit {
   recipes: Recipe[];
-  
   recipeDetail: Recipe;
+
   constructor(private recipesServiceService: RecipesService,
     private router: Router,
     private route: ActivatedRoute) { }
@@ -20,6 +20,8 @@ export class RecipesListComponent implements OnInit {
     this.recipes= this.recipesServiceService.getRecipes();
   }
 
+  // Router         - router 用于管理应用程序中的路由对象，例如重新導航
+  // ActivatedRoute - route  用于跟踪已经激活的路由对象
   onNewRecipe(){
     this.router.navigate(['new'], {relativeTo: this.route});
   }
