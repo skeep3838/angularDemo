@@ -1,7 +1,7 @@
 import { ActivatedRoute, Params } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { RecipesService } from '../recipes-service';
-import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Ingerdient } from 'src/app/shared/ingerdient.model';
 
 @Component({
@@ -29,7 +29,7 @@ export class RecipeEditComponent implements OnInit {
       });
 
   }
-  
+
   get ingredients() { // a getter!
     return this.recipeForm.controls['ingredients'] as FormArray;
   }
@@ -45,12 +45,15 @@ export class RecipeEditComponent implements OnInit {
       recipeName = recipe.name;
       recipeImagePath = recipe.imagePath;
       recipeDesc = recipe.description;
-      if(recipe.ingerdients){
-        for(let ingerient of recipe.ingerdients){
+      if (recipe.ingerdients) {
+        for (let ingerient of recipe.ingerdients) {
           recipeIngredients.push(
             new FormGroup({
-              'name': new FormControl(ingerient.name),
-              'amount': new FormControl(ingerient.amount)
+              'name': new FormControl(ingerient.name, Validators.required),
+              'amount': new FormControl(ingerient.amount, [
+                Validators.required,
+                Validators.pattern(/^[1-9]+[0-9]*$/)
+              ])
             })
           );
         }
@@ -58,15 +61,28 @@ export class RecipeEditComponent implements OnInit {
     }
 
     this.recipeForm = new FormGroup({
-      'name': new FormControl(recipeName),
-      'imagePath': new FormControl(recipeImagePath),
-      'description': new FormControl(recipeDesc),
+      'name': new FormControl(recipeName, Validators.required),
+      'imagePath': new FormControl(recipeImagePath, Validators.required),
+      'description': new FormControl(recipeDesc, Validators.required),
       'ingredients': recipeIngredients
     });
   }
 
-  onSubmit(){
+  // 動態新增Ingredients
+  onAddIngredient() {
+    // < > 內寫的是要轉換的類型
+    (<FormArray>this.recipeForm.controls['ingredients']).push(
+      new FormGroup({
+        'name': new FormControl(null, Validators.required),
+        'amount': new FormControl(null, [Validators.required, Validators.pattern(/^[1-9]+[0-9]*$/)])
+      })
+    );
+  }
+
+  onSubmit() {
     console.log(this.recipeForm);
+    this.recipeService.updateRecipe(this.id, this.recipeForm.value);
+    this.recipeService.getById(this.id);
   }
 
 }
