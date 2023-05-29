@@ -1,8 +1,9 @@
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { RecipesService } from '../recipes-service';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Ingerdient } from 'src/app/shared/ingerdient.model';
+import { Recipe } from '../recipe-model';
 
 @Component({
   selector: 'app-recipe-edit',
@@ -15,13 +16,14 @@ export class RecipeEditComponent implements OnInit {
 
   recipeForm: FormGroup;
 
-  constructor(private router: ActivatedRoute,
-    private recipeService: RecipesService) { }
+  constructor(private route: ActivatedRoute,
+    private recipeService: RecipesService,
+    private router: Router) { }
 
   ngOnInit() {
     // 透過Router進來會判斷是新增還是編輯
     // 並對Form做初始化
-    this.router.params
+    this.route.params
       .subscribe((psrsms: Params) => {
         this.id = +psrsms['id'];
         this.editMode = psrsms['id'] != null;
@@ -30,8 +32,8 @@ export class RecipeEditComponent implements OnInit {
 
   }
 
-  get ingredients() { // a getter!
-    return this.recipeForm.controls['ingredients'] as FormArray;
+  get ingerdients() { // a getter!
+    return this.recipeForm.controls['ingerdients'] as FormArray;
   }
 
   private initForm() {
@@ -64,14 +66,15 @@ export class RecipeEditComponent implements OnInit {
       'name': new FormControl(recipeName, Validators.required),
       'imagePath': new FormControl(recipeImagePath, Validators.required),
       'description': new FormControl(recipeDesc, Validators.required),
-      'ingredients': recipeIngredients
+      'ingerdients': recipeIngredients
     });
+    console.log(this.recipeForm);
   }
 
   // 動態新增Ingredients
   onAddIngredient() {
     // < > 內寫的是要轉換的類型
-    (<FormArray>this.recipeForm.controls['ingredients']).push(
+    (<FormArray>this.recipeForm.controls['ingerdients']).push(
       new FormGroup({
         'name': new FormControl(null, Validators.required),
         'amount': new FormControl(null, [Validators.required, Validators.pattern(/^[1-9]+[0-9]*$/)])
@@ -80,9 +83,24 @@ export class RecipeEditComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.recipeForm);
-    this.recipeService.updateRecipe(this.id, this.recipeForm.value);
-    this.recipeService.getById(this.id);
+    let newRecipe: Recipe = this.recipeForm.value;  // 直接這樣塞， newRecipe.ingerdients = []
+    // newRecipe.ingerdients = this.ingredients.value;
+    console.log(newRecipe)
+    if (this.editMode) {
+      this.recipeService.updateRecipe(this.id, newRecipe);
+    } else {
+      this.recipeService.addRecipe(newRecipe);
+    }
+    this.onCancel();
+  }
+
+  onCancel() {
+    this.router.navigate(['../'], { 'relativeTo': this.route });
+  }
+
+  onDeleteIngredient(index: number) {
+    this.ingerdients.removeAt(index);
+    // console.log(this.recipeForm)
   }
 
 }

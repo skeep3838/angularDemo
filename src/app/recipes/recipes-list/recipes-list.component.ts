@@ -1,23 +1,32 @@
 import { ActivatedRoute, Router } from '@angular/router';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { Recipe } from '../recipe-model';
 import { RecipesService } from '../recipes-service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-recipes-list',
   templateUrl: './recipes-list.component.html',
   styleUrls: ['./recipes-list.component.css']
 })
-export class RecipesListComponent implements OnInit {
+export class RecipesListComponent implements OnInit, OnDestroy {
   recipes: Recipe[];
   recipeDetail: Recipe;
+  subscription: Subscription;
 
-  constructor(private recipesServiceService: RecipesService,
+  constructor(private recipesService: RecipesService,
     private router: Router,
     private route: ActivatedRoute) { }
 
   ngOnInit() {
-    this.recipes= this.recipesServiceService.getRecipes();
+    this.subscription = this.recipesService.recipeChanged.subscribe((newRecipes) =>{
+      this.recipes=newRecipes;
+    });
+    this.recipes= this.recipesService.getRecipes();
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 
   // Router         - router 用于管理应用程序中的路由对象，例如重新導航

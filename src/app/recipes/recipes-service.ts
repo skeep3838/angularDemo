@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Recipe } from './recipe-model';
 import { Ingerdient } from '../shared/ingerdient.model';
 import { ShoppingListService } from '../shopping-list/shopping-list.service';
+import { Subject } from 'rxjs';
 
 // 'self':表示该组件或类将直接被注入到其所在的模块的提供者中。
 // 'root':表示该组件或类将被注入到 Angular 的根提供者中。
@@ -12,6 +13,7 @@ import { ShoppingListService } from '../shopping-list/shopping-list.service';
 // 需要注意的是，providedIn 属性的值必须是一个大写字母或下划线开头的字符串，并且只能包含字母、数字和下划线。如果 providedIn 属性的值不被正确设置，则 Angular 将抛出一个错误。
 @Injectable()
 export class RecipesService {
+  recipeChanged = new Subject<Recipe[]>();
 
   private recipes: Recipe[] = [
     new Recipe('Test1', 'This Description 1!', 'https://tokyo-kitchen.icook.network/uploads/step/cover/1858737/cedd5c5e0600fd2c.jpg',
@@ -38,10 +40,16 @@ export class RecipesService {
 
   updateRecipe(index: number, newRecipe: Recipe) {
     this.recipes[index] = newRecipe;
+    this.recipeChanged.next(this.recipes.slice());
   }
 
   addRecipe(newRecipe: Recipe){
     this.recipes.push(newRecipe);
+    this.recipeChanged.next(this.recipes.slice());
   }
 
+  deleteRecipes(index: number){
+    this.recipes.splice(index, 1);
+    this.recipeChanged.next(this.recipes.slice());
+  }
 }

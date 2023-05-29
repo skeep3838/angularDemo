@@ -18,6 +18,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PipeDemoComponent } from './pipe-demo/pipe-demo.component';
 import { ShortPipe } from './shared/shortPipe';
 import { FilterPipe } from './shared/filter.pipe';
+import { RecipesService } from './recipes/recipes-service';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,7 @@ import { FilterPipe } from './shared/filter.pipe';
     FormsModule,
     ReactiveFormsModule
   ],
-  providers: [ShoppingListService],
+  providers: [ShoppingListService, RecipesService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
