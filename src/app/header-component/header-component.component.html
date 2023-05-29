@@ -15,6 +15,12 @@
       <li class="nav-item">
         <a class="nav-link" routerLinkActive="active" [routerLink]="['/pipeDemo']">Pipe Demo</a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link" (click)="onSaveData()">Save Data</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" (click)="onFetchData()">Fetch Data</a>
+      </li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
       <li class="dropdown" appDropdown>
