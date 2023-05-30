@@ -6,17 +6,20 @@ import { ShoppingListComponent } from './shopping-list/shopping-list.component';
 import { RecipesDetailComponent } from './recipes/recipes-detail/recipes-detail.component';
 import { RecipeStartComponent } from './recipes/recipe-start/recipe-start.component';
 import { PipeDemoComponent } from './pipe-demo/pipe-demo.component';
+import { RecipeResoliverService } from './recipes/recipe-resoliver.service';
 
 const routes: Routes = [
-  {path: '', redirectTo: '/recipe', pathMatch: 'full'},
-  {path: 'recipe', component: RecipesComponent, children:[
-    {path: '', component: RecipeStartComponent},
-    {path: 'new', component: RecipeEditComponent},
-    {path: ':id', component: RecipesDetailComponent},
-    {path: ':id/edit', component: RecipeEditComponent}
-  ]},
-  {path: 'shoppingList', component: ShoppingListComponent},
-  {path: 'pipeDemo', component: PipeDemoComponent}
+  { path: '', redirectTo: '/recipe', pathMatch: 'full' },
+  {
+    path: 'recipe', component: RecipesComponent, children: [
+      { path: '', component: RecipeStartComponent },
+      { path: 'new', component: RecipeEditComponent },
+      { path: ':id', component: RecipesDetailComponent, resolve: [RecipeResoliverService] },
+      { path: ':id/edit', component: RecipeEditComponent, resolve: [RecipeResoliverService] }
+    ]
+  },
+  { path: 'shoppingList', component: ShoppingListComponent },
+  { path: 'pipeDemo', component: PipeDemoComponent }
 ];
 
 @NgModule({

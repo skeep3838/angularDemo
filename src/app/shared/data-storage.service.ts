@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map } from "rxjs/operators";
+import { map, tap } from "rxjs/operators";
 import { RecipesService } from './../recipes/recipes-service';
 import { Recipe } from '../recipes/recipe-model';
 
@@ -23,15 +23,18 @@ export class DataStorageService {
   }
 
   fetchRecipes() {
-    this.http.get<Recipe[]>(this.recipeURL)
-      .pipe(map(recipes => {
-        return recipes.map(recipe => {
-          // 確保若配方沒有值，設定為[]
-          return { ...recipe, ingerdients: recipe.ingerdients ? recipe.ingerdients : [] }
+    return this.http.get<Recipe[]>(this.recipeURL)
+      .pipe(
+        map(recipes => {
+          return recipes.map(recipe => {
+            // 確保若配方沒有值，設定為[]
+            return { ...recipe, ingerdients: recipe.ingerdients ? recipe.ingerdients : [] };
+          });
+        }),
+        // 透過觀察物件的方式進行一些處理 
+        tap(recipes => {
+          this.recipesService.setRecipes(recipes);
         })
-      }))
-      .subscribe(recipes => {
-        this.recipesService.setRecipes(recipes);
-      });
+      )
   }
 }
