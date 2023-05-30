@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map, tap } from "rxjs/operators";
+import { map,catchError, tap } from "rxjs/operators";
 import { RecipesService } from './../recipes/recipes-service';
 import { Recipe } from '../recipes/recipe-model';
+import { Subject, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,7 @@ export class DataStorageService {
 
   constructor(private http: HttpClient,
     private recipesService: RecipesService) { }
+  error = new Subject<string>();
 
   stargeRecipes() {
     const recipes = this.recipesService.getRecipes();
@@ -19,6 +21,8 @@ export class DataStorageService {
     // return this.http.put('https://angulardemo-574ac-default-rtdb.firebaseio.com/recipes.json', recipes);
     this.http.put(this.recipeURL, recipes).subscribe(resp => {
       console.log(resp);
+    }, error => {
+      this.error = error;
     });
   }
 
@@ -34,6 +38,9 @@ export class DataStorageService {
         // 透過觀察物件的方式進行一些處理 
         tap(recipes => {
           this.recipesService.setRecipes(recipes);
+        }),
+        catchError(errorRes => {
+          return throwError(errorRes);
         })
       )
   }

@@ -20,6 +20,7 @@ import { PipeDemoComponent } from './pipe-demo/pipe-demo.component';
 import { ShortPipe } from './shared/shortPipe';
 import { FilterPipe } from './shared/filter.pipe';
 import { RecipesService } from './recipes/recipes-service';
+import { AuthComponent } from './auth/auth.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { RecipesService } from './recipes/recipes-service';
     RecipeEditComponent,
     PipeDemoComponent,
     ShortPipe,
-    FilterPipe
+    FilterPipe,
+    AuthComponent
   ],
   imports: [
     BrowserModule,
