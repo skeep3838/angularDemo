@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import { RecipesService } from './../recipes/recipes-service';
 import { Injectable } from '@angular/core';
+import { map } from "rxjs/operators";
+import { RecipesService } from './../recipes/recipes-service';
 import { Recipe } from '../recipes/recipe-model';
 
 @Injectable({
@@ -22,8 +23,15 @@ export class DataStorageService {
   }
 
   fetchRecipes() {
-    this.http.get<Recipe[]>(this.recipeURL).subscribe(recipes =>{
-      this.recipesService.setRecipes(recipes);
-    });
+    this.http.get<Recipe[]>(this.recipeURL)
+      .pipe(map(recipes => {
+        return recipes.map(recipe => {
+          // 確保若配方沒有值，設定為[]
+          return { ...recipe, ingerdients: recipe.ingerdients ? recipe.ingerdients : [] }
+        })
+      }))
+      .subscribe(recipes => {
+        this.recipesService.setRecipes(recipes);
+      });
   }
 }
