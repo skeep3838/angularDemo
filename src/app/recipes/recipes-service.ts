@@ -25,6 +25,11 @@ export class RecipesService {
   ];
   constructor(private slService: ShoppingListService) { }
 
+  setRecipes(recipes: Recipe[]) {
+    this.recipes = recipes;
+    this.recipeChanged .next(this.recipes.slice());
+  }
+
   getRecipes() {
     // slice 取得副本
     return this.recipes.slice();
@@ -43,12 +48,12 @@ export class RecipesService {
     this.recipeChanged.next(this.recipes.slice());
   }
 
-  addRecipe(newRecipe: Recipe){
+  addRecipe(newRecipe: Recipe) {
     this.recipes.push(newRecipe);
     this.recipeChanged.next(this.recipes.slice());
   }
 
-  deleteRecipes(index: number){
+  deleteRecipes(index: number) {
     this.recipes.splice(index, 1);
     this.recipeChanged.next(this.recipes.slice());
   }
