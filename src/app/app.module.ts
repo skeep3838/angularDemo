@@ -21,6 +21,7 @@ import { ShortPipe } from './shared/shortPipe';
 import { FilterPipe } from './shared/filter.pipe';
 import { RecipesService } from './recipes/recipes-service';
 import { AuthComponent } from './auth/auth.component';
+import { LoadingSpinnerComponent } from './shared/loading-spinner/loading-spinner/loading-spinner.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { AuthComponent } from './auth/auth.component';
     PipeDemoComponent,
     ShortPipe,
     FilterPipe,
-    AuthComponent
+    AuthComponent,
+    LoadingSpinnerComponent
   ],
   imports: [
     BrowserModule,

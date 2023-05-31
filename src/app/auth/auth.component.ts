@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { AuthService } from './auth.service';
+import { Observable } from 'rxjs';
+import { AuthResponsedata, AuthService } from './auth.service';
 
 @Component({
   selector: 'app-auth',
@@ -9,6 +10,8 @@ import { AuthService } from './auth.service';
 export class AuthComponent implements OnInit {
 
   isLoginMode = true;
+  isLoading = false;
+  error: string = '';
 
   constructor(private authService: AuthService) { }
 
@@ -26,22 +29,26 @@ export class AuthComponent implements OnInit {
     const email = form.value.email;
     const passward = form.value.password;
 
+    // 將登入登出要做的同樣的事情統整起來
+    let authObs: Observable<AuthResponsedata>;
+
+    this.isLoading = true;
     if (this.isLoginMode) {
-      this.authService.signin(email, passward).subscribe(
-        respData => {
-          console.log(respData);
-        }, error => {
-          console.log(error);
-        });
+      authObs = this.authService.signin(email, passward);
     } else {
-      this.authService.signup(email, passward).subscribe(
-        respData => {
-          console.log(respData);
-        }, error => {
-          console.log(error);
-        }
-      );
+      authObs = this.authService.signup(email, passward);
     }
+
+    authObs.subscribe(
+      respData => {
+        console.log(respData);
+        this.isLoading = false;
+        this.error = '';
+      }, error => {
+        this.error = error;
+        this.isLoading = false;
+      }
+    );
     form.reset();
   }
 
