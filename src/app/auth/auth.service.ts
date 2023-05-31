@@ -1,4 +1,5 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { Subject, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
@@ -19,7 +20,7 @@ export interface AuthResponsedata {
 export class AuthService {
   user = new Subject<User>();
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private router: Router) { }
 
   signup(email: string, password: string) {
     return this.http.post<AuthResponsedata>('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCGIXQv3yGZPgJN1Lrx0YC046-JWzWNik0',
@@ -30,7 +31,7 @@ export class AuthService {
       }).pipe(
         catchError(this.errorHandle),
         tap(respData => {
-          this.handleAuthentication(respData.email, respData.localId, respData.idToken, +respData.expiresIn)
+          this.handleAuthentication(respData.email, respData.localId, respData.idToken, +respData.expiresIn);
         })
       );
   }
@@ -44,7 +45,8 @@ export class AuthService {
       }).pipe(
         catchError(this.errorHandle),
         tap(respData => {
-          this.handleAuthentication(respData.email, respData.localId, respData.idToken, +respData.expiresIn)
+          this.handleAuthentication(respData.email, respData.localId, respData.idToken, +respData.expiresIn);
+          this.router.navigate(['recipe']);
         })
       );
   }
