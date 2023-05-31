@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Subject, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { User } from './user.model';
 
 export interface AuthResponsedata {
@@ -17,6 +17,7 @@ export interface AuthResponsedata {
   providedIn: 'root'
 })
 export class AuthService {
+  user = new Subject<User>();
 
   constructor(private http: HttpClient) { }
 
@@ -27,7 +28,10 @@ export class AuthService {
         password: password,
         returnSecureToken: true
       }).pipe(
-        catchError(this.errorHandle)
+        catchError(this.errorHandle),
+        tap(respData => {
+          this.handleAuthentication(respData.email, respData.localId, respData.idToken, +respData.expiresIn)
+        })
       );
   }
 
@@ -38,8 +42,29 @@ export class AuthService {
         password: password,
         returnSecureToken: true
       }).pipe(
-        catchError(this.errorHandle)
+        catchError(this.errorHandle),
+        tap(respData => {
+          this.handleAuthentication(respData.email, respData.localId, respData.idToken, +respData.expiresIn)
+        })
       );
+  }
+
+  private handleAuthentication(
+    email: string,
+    localId: string,
+    idToken: string,
+    expiresIn: number
+  ) {
+    const expirationDate = new Date(
+      new Date().getTime() + +expiresIn * 1000
+    );
+    const user = new User(
+      email,
+      localId,
+      idToken,
+      expirationDate
+    );
+    this.user.next(user);
   }
 
   private errorHandle(errResp: HttpErrorResponse) {
@@ -49,9 +74,9 @@ export class AuthService {
       return throwError(errMsg);
     }
     switch (errResp.error.error.message) {
-       case 'EMAIL_EXISTS':
-              errMsg = '此信箱已註冊！';
-              break;
+      case 'EMAIL_EXISTS':
+        errMsg = '此信箱已註冊！';
+        break;
       case 'INVALID_PASSWORD':
         errMsg = '密碼輸入錯誤！';
         break;
