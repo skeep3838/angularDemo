@@ -19,6 +19,7 @@ export interface AuthResponsedata {
 })
 export class AuthService {
   user = new BehaviorSubject<User>(null);
+  private tokenExporationTimer: any;
 
   constructor(private http: HttpClient, private router: Router) { }
 
@@ -51,23 +52,42 @@ export class AuthService {
       );
   }
 
-  logout(){
+  logout() {
     this.user.next(null);
+    this.router.navigate(['/auth']);
+    localStorage.clear();
+
+    // 登出需重新設定計時器
+    if (this.tokenExporationTimer) {
+      clearTimeout(this.tokenExporationTimer);
+    }
+    this.tokenExporationTimer = null;
   }
 
-  autoLogin(){
+  // 超時自動登出
+  autoLogout(expirationDuration: number) {
+    this.tokenExporationTimer = setTimeout(() => {
+      this.logout();
+    }, expirationDuration);
+  }
+
+  // 從localstorage取userData自動登入
+  autoLogin() {
     const userdata = JSON.parse(localStorage.getItem('userData'));
-    if(!userdata){
+    if (!userdata) {
       return;
     }
 
-    const loadUser = new User(userdata.email,userdata.id, userdata._token, new Date(userdata._tokenExpirationDate));
+    const loadUser = new User(userdata.email, userdata.id, userdata._token, new Date(userdata._tokenExpirationDate));
 
-    if(loadUser.token){
+    if (loadUser.token) {
       this.user.next(loadUser);
+      // 有效期限－現在時間
+      const expirationDurtion = new Date(userdata._tokenExpirationDate).getTime()-new Date().getTime();
     }
   }
 
+  // 處理authData至 this.user
   private handleAuthentication(
     email: string,
     localId: string,
@@ -84,9 +104,11 @@ export class AuthService {
       expirationDate
     );
     this.user.next(user);
+    this.autoLogout(expiresIn*1000); //依token使用期限設定超時時間
     localStorage.setItem('userData', JSON.stringify(user));
   }
 
+  // response 錯誤訊息處理
   private errorHandle(errResp: HttpErrorResponse) {
     console.log(errResp);
     let errMsg = '發生未知錯誤！'
