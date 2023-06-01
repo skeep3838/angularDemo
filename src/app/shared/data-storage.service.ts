@@ -30,15 +30,8 @@ export class DataStorageService {
 
   fetchRecipes() {
     // 尋找最新的使用者資訊  
-    return this.authService.user.pipe(
-      // 只使用一次立即unsubscribe=>使用take()
-      take(1),
-      // 將使用者資訊傳送到 http.get() 函數中，並將其簽證為當前使用者的簽證權限  
-      exhaustMap(user => {
-        return this.http.get<Recipe[]>(this.recipeURL, {
-          params: new HttpParams().set('auth', user.token)
-        });
-      }),
+    return this.http.get<Recipe[]>(this.recipeURL)
+    .pipe(
       // 將this.http.get<>()返回的資料做處理
       map(recipes => {
         return recipes.map(recipe => {
