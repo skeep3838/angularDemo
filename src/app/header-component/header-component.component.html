@@ -40,7 +40,7 @@
         <a class="nav-link" (click)="onFetchData()">Fetch Data</a>
       </li>
       <li *ngIf="isAuthenticated">
-        <a class="nav-link" style="cursor: pointer;">Logout</a>
+        <a class="nav-link" style="cursor: pointer;" (click)="onLogout()">Logout</a>
       </li>
     </ul>
   </div>
