@@ -7,6 +7,7 @@ import { exhaustMap, take } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
+// 阻斷器 - 在送出 request之前，會先到這邊設定auth
 export class AuthInterceptorService implements HttpInterceptor {
 
   constructor(private authService: AuthService) { }

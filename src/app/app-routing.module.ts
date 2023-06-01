@@ -8,11 +8,14 @@ import { RecipeStartComponent } from './recipes/recipe-start/recipe-start.compon
 import { PipeDemoComponent } from './pipe-demo/pipe-demo.component';
 import { RecipeResoliverService } from './recipes/recipe-resoliver.service';
 import { AuthComponent } from './auth/auth.component';
+import { AuthGuardService } from './auth/auth-guard.service';
 
 const routes: Routes = [
   { path: '', redirectTo: '/recipe', pathMatch: 'full' },
   {
-    path: 'recipe', component: RecipesComponent, children: [
+    path: 'recipe', component: RecipesComponent, 
+    canActivate: [AuthGuardService],
+    children: [
       { path: '', component: RecipeStartComponent },
       { path: 'new', component: RecipeEditComponent },
       { path: ':id', component: RecipesDetailComponent, resolve: [RecipeResoliverService] },
