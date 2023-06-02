@@ -17,6 +17,7 @@ export class DataStorageService {
     private authService: AuthService) { }
   error = new Subject<string>();
 
+  // 儲存目前的食譜至firebase
   stargeRecipes() {
     const recipes = this.recipesService.getRecipes();
     // 如果Component須在response的內容做處理，可以直接return
@@ -28,6 +29,7 @@ export class DataStorageService {
     });
   }
 
+  // 拉回存在雲端的食譜
   fetchRecipes() {
     // 尋找最新的使用者資訊  
     return this.http.get<Recipe[]>(this.recipeURL)

@@ -15,7 +15,7 @@ export class RecipeResoliverService implements Resolve<Recipe[]>{
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Recipe[] | Observable<Recipe[]> | Promise<Recipe[]> {
     const recipes = this.recipesService.getRecipes();
-    // 若沒有recipes，則重新仔入資料
+    // 若沒有recipes，則重新載入資料
     if(recipes.length===0){
       return this.dataStorageService.fetchRecipes();
     }else{

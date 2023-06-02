@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Serve } from './Serve';
 
+
 @Component({
   selector: 'app-pipe-demo',
   templateUrl: './pipe-demo.component.html',

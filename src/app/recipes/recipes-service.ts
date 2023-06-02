@@ -4,17 +4,12 @@ import { Ingerdient } from '../shared/ingerdient.model';
 import { ShoppingListService } from '../shopping-list/shopping-list.service';
 import { Subject } from 'rxjs';
 
-// 'self':表示该组件或类将直接被注入到其所在的模块的提供者中。
-// 'root':表示该组件或类将被注入到 Angular 的根提供者中。
-// 'component':表示该组件或类将被注入到一个组件的提供者中。
-// 'service':表示该组件或类将被注入到一个服务的提供者中。
-// 'query':表示该组件或类将被注入到一个查询的提供者中。
-// 'static':表示该组件或类将被注入到一个静态提供者中。
-// 需要注意的是，providedIn 属性的值必须是一个大写字母或下划线开头的字符串，并且只能包含字母、数字和下划线。如果 providedIn 属性的值不被正确设置，则 Angular 将抛出一个错误。
 @Injectable()
 export class RecipesService {
+  // 給component做即時更新用
   recipeChanged = new Subject<Recipe[]>();
 
+  // 原先才在這裡的初始資料，改存到firebase
   // private recipes: Recipe[] = [
   //   new Recipe('Test1', 'This Description 1!', 'https://tokyo-kitchen.icook.network/uploads/step/cover/1858737/cedd5c5e0600fd2c.jpg',
   //     [new Ingerdient('麵條', 1), new Ingerdient('高湯', 1), new Ingerdient('配料', 1)]),
@@ -23,10 +18,11 @@ export class RecipesService {
   //   new Recipe('Test3', 'This Description 3!', 'https://media.gq.com.tw/photos/602f8f38797fed84034b1608/4:3/w_4032,h_3024,c_limit/IMG_5275.JPG',
   //     [new Ingerdient('麵條', 3), new Ingerdient('高湯', 3), new Ingerdient('配料', 3)]),
   // ];
-
   private recipes: Recipe[] = [];
+
   constructor(private slService: ShoppingListService) { }
 
+  // 設定編輯後的食譜們
   setRecipes(recipes: Recipe[]) {
     this.recipes = recipes;
     this.recipeChanged .next(this.recipes.slice());
@@ -41,6 +37,7 @@ export class RecipesService {
     return this.recipes[index];
   }
 
+  // 將食譜內的材料加入至購物車
   addIngerdientToShoppingList(ingerdient: Ingerdient[]) {
     this.slService.addIngerdientToShoppingList(ingerdient);
   }
