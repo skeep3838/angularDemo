@@ -8,7 +8,8 @@ import { RecipesService } from '../../recipes-service';
   styleUrls: ['./recipes-item.component.css']
 })
 export class RecipesItemComponent implements OnInit {
-  @Input() recipeForItem: Recipe;
+  // 由recipeList引進的參數資訊
+  @Input() recipeForItem: Recipe; 
   @Input() index: number;
 
   constructor(private recipesServiceService: RecipesService) { }

@@ -9,6 +9,7 @@ export class ShoppingListService {
     new Ingerdient('Apple', 5),
     new Ingerdient('Onian', 10)
   ];
+  // 編輯模式所使用的資料
   startedEdit = new Subject<number>();
 
   constructor() { }

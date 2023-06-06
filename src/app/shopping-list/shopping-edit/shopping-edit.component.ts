@@ -26,6 +26,7 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    // 取得編輯模式所需的清單資料
     this.subscription = this.slService.startedEdit.subscribe(
       (index: number) => {
         this.editMode = true;

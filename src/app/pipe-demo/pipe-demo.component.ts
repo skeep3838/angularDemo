@@ -4,8 +4,7 @@ import { Serve } from './serve';
 
 @Component({
   selector: 'app-pipe-demo',
-  templateUrl: './pipe-demo.component.html',
-  styleUrls: ['./pipe-demo.component.css']
+  templateUrl: './pipe-demo.component.html'
 })
 export class PipeDemoComponent implements OnInit {
 

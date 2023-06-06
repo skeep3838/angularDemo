@@ -6,8 +6,7 @@ import { RecipesService } from '../recipes-service';
 
 @Component({
   selector: 'app-recipes-detail',
-  templateUrl: './recipes-detail.component.html',
-  styleUrls: ['./recipes-detail.component.css']
+  templateUrl: './recipes-detail.component.html'
 })
 export class RecipesDetailComponent implements OnInit {
   recipeDetail: Recipe;
@@ -20,7 +19,7 @@ export class RecipesDetailComponent implements OnInit {
   ngOnInit() {
     // const id = this.router.snapshot.params['ip'];
     this.route.params.subscribe((params: Params) => {
-      this.id = +params['id']; //+ 好為自動轉型成number
+      this.id = +params['id']; //+ 號為自動轉型成number
       this.recipeDetail = this.recipesService.getById(this.id);
     });
   }
@@ -31,6 +30,7 @@ export class RecipesDetailComponent implements OnInit {
 
   onEditRecipe() {
     this.router.navigate(['edit'], {relativeTo: this.route});
+    // 等同於
     // this.router.navigate(['../', this.id, 'edit'], { relativeTo: this.route });
   }
 

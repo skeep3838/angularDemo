@@ -6,13 +6,12 @@ import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-recipes-list',
-  templateUrl: './recipes-list.component.html',
-  styleUrls: ['./recipes-list.component.css']
+  templateUrl: './recipes-list.component.html'
 })
 export class RecipesListComponent implements OnInit, OnDestroy {
   recipes: Recipe[];
   recipeDetail: Recipe;
-  subscription: Subscription;
+  subscription: Subscription;  // 用來訂閱即時食譜資料
 
   constructor(private recipesService: RecipesService,
     private router: Router,

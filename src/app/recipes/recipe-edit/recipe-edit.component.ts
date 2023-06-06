@@ -16,14 +16,15 @@ export class RecipeEditComponent implements OnInit {
 
   recipeForm: FormGroup;
 
-  constructor(private route: ActivatedRoute,
+  constructor(private avtiveRoute: ActivatedRoute,
     private recipeService: RecipesService,
     private router: Router) { }
 
   ngOnInit() {
     // 透過Router進來會判斷是新增還是編輯
     // 並對Form做初始化
-    this.route.params
+    // 追蹤使用中的路由物件，來取得id 
+    this.avtiveRoute.params
       .subscribe((psrsms: Params) => {
         this.id = +psrsms['id'];
         this.editMode = psrsms['id'] != null;
@@ -36,12 +37,14 @@ export class RecipeEditComponent implements OnInit {
     return this.recipeForm.controls['ingerdients'] as FormArray;
   }
 
+  // 初始化Reactive Form表單
   private initForm() {
     let recipeName = '';
     let recipeImagePath = '';
     let recipeDesc = '';
     let recipeIngredients = new FormArray([]);
 
+    // 如果是編輯模式，放入要編輯的食譜資訊
     if (this.editMode) {
       const recipe = this.recipeService.getById(this.id);
       recipeName = recipe.name;
@@ -83,24 +86,24 @@ export class RecipeEditComponent implements OnInit {
   }
 
   onSubmit() {
-    let newRecipe: Recipe = this.recipeForm.value;  // 直接這樣塞， newRecipe.ingerdients = []
-    // newRecipe.ingerdients = this.ingredients.value;
+    let newRecipe: Recipe = this.recipeForm.value;
     console.log(newRecipe)
     if (this.editMode) {
       this.recipeService.updateRecipe(this.id, newRecipe);
     } else {
       this.recipeService.addRecipe(newRecipe);
     }
+    // 更新完成後清空編輯食譜資訊
     this.onCancel();
   }
 
   onCancel() {
-    this.router.navigate(['../'], { 'relativeTo': this.route });
+    // 取消之後回到當前食譜的編輯畫面
+    this.router.navigate(['../'], { 'relativeTo': this.avtiveRoute });
   }
 
   onDeleteIngredient(index: number) {
     this.ingerdients.removeAt(index);
-    // console.log(this.recipeForm)
   }
 
 }

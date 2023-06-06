@@ -18,11 +18,15 @@ export interface AuthResponsedata {
   providedIn: 'root'
 })
 export class AuthService {
-  user = new BehaviorSubject<User>(null);
-  private tokenExporationTimer: any;
+  // 創建一个 BehaviorSubject<> 時，
+  // 它將立即向所有已經訂閱該 Subject 的觀察者發送一個預設值。
+  // 可以使用 take() 方法開始監聽該流，並在流中的元素發生變化時向觀察者發送更新。
+  user = new BehaviorSubject<User>(null); // 當前使用者資訊
+  private tokenExporationTimer: any;      // Token計時器
 
   constructor(private http: HttpClient, private router: Router) { }
 
+  // 註冊
   signup(email: string, password: string) {
     return this.http.post<AuthResponsedata>('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCGIXQv3yGZPgJN1Lrx0YC046-JWzWNik0',
       {
@@ -37,6 +41,7 @@ export class AuthService {
       );
   }
 
+  // 登入-登入完成後，設定使用者資訊，並導向/recipe
   signin(email: string, password: string) {
     return this.http.post<AuthResponsedata>('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCGIXQv3yGZPgJN1Lrx0YC046-JWzWNik0',
       {
@@ -52,6 +57,7 @@ export class AuthService {
       );
   }
 
+  // 登出-將使用者資訊及token計時器清空，並重新導向登入頁面
   logout() {
     this.user.next(null);
     this.router.navigate(['/auth']);
@@ -123,7 +129,7 @@ export class AuthService {
         errMsg = '密碼輸入錯誤！';
         break;
       case 'EMAIL_NOT_FOUND':
-        errMsg = '未註冊的mail！'
+        errMsg = '未註冊的mail!'
         break;
     }
     return throwError(errMsg);

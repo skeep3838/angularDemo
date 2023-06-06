@@ -14,9 +14,10 @@ export class AuthInterceptorService implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return this.authService.user.pipe(
-      // 只使用一次立即unsubscribe=>使用take()
+      // 只使用一次立即unsubscribe => 使用take(1)
       take(1),
-      // 將使用者資訊傳送到 http.get() 函數中，並將其簽證為當前使用者的簽證權限  
+      // 將使用者資訊傳送到 http.get() 函數中，並將其簽證為當前使用者的簽證權限 
+      // switchMap 
       exhaustMap(user => {
         // 只在有user的狀況下加入token
         if(!user){

@@ -13,8 +13,7 @@ export class DataStorageService {
   recipeURL = 'https://angulardemo-574ac-default-rtdb.firebaseio.com/recipes.json';
 
   constructor(private http: HttpClient,
-    private recipesService: RecipesService,
-    private authService: AuthService) { }
+    private recipesService: RecipesService) { }
   error = new Subject<string>();
 
   // 儲存目前的食譜至firebase
@@ -24,6 +23,7 @@ export class DataStorageService {
     // return this.http.put('https://angulardemo-574ac-default-rtdb.firebaseio.com/recipes.json', recipes);
     this.http.put(this.recipeURL, recipes).subscribe(resp => {
       console.log(resp);
+      alert('已儲存!');
     }, error => {
       this.error = error;
     });

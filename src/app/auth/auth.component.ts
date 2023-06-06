@@ -12,9 +12,9 @@ import { PlaceholderDirective } from '../shared/placeholder/placeholder.directiv
 export class AuthComponent implements OnInit, OnDestroy {
 
   isLoginMode = true;
-  isLoading = false;
+  isLoading = false;  // Loading動畫
   error: string = '';
-  @ViewChild(PlaceholderDirective, { static: false }) alertHost: PlaceholderDirective;
+  @ViewChild(PlaceholderDirective, { static: false }) alertHost: PlaceholderDirective; // 錯誤訊息視圖容器
   private closeSub: Subscription;
 
   constructor(private authService: AuthService, private componentFactoryResolver: ComponentFactoryResolver) { }
@@ -80,6 +80,7 @@ export class AuthComponent implements OnInit, OnDestroy {
     // 訪問Component裡的內容
     componentRef.instance.message = message;
     // 當要手動訂閱某個東西時，通常會想用Subject，但用ComponentFactory可以直接使用事件發射器定直接subject
+    // 訂閱AlertComponent 內的close參數，做關閉視窗操作
     this.closeSub = componentRef.instance.close.subscribe(() => {
       this.closeSub.unsubscribe();
       hostViewContainerRef.clear();

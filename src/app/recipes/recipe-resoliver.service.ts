@@ -8,6 +8,8 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
+// 在路由定義中透過 resolve 屬性物件來指定 Resolve 服務，
+// Angular 會先利用此服務取得資料後，才進行頁面元件的載入。
 export class RecipeResoliverService implements Resolve<Recipe[]>{
 
   constructor(private dataStorageService: DataStorageService,

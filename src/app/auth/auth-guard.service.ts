@@ -16,10 +16,11 @@ export class AuthGuardService implements CanActivate {
     return this.authService.user.pipe(
       take(1),
       map(user => {
-        const isAuth = !!user;
+        const isAuth = !!user; // 取得user的boolean
         if(isAuth){
           return true;
         }
+        // 若沒有auth，則直接導向登入頁面
         return this.router.createUrlTree(['/auth']);
       }),
       // tap(isAuth => {
