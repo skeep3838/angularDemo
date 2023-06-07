@@ -21,6 +21,7 @@ import { AlertComponent } from './shared/alert/alert.component';
 import { PlaceholderDirective } from './shared/placeholder/placeholder.directive';
 import { RecipesModule } from './recipes/recipes.module';
 import { RecipeRoutingModule } from './recipes/recipe-routing.module';
+import { ShoppingListModule } from './shopping-list/shopping-list.module';
 
 //每個Module是獨立運作的，所以無法在這裡使用app.Module設定的內容
 @NgModule({
@@ -28,8 +29,6 @@ import { RecipeRoutingModule } from './recipes/recipe-routing.module';
   declarations: [
     AppComponent,
     HeaderComponentComponent,
-    ShoppingListComponent,
-    ShoppingEditComponent,
     DropdownDirective,
     PipeDemoComponent,
     ShortPipe,
@@ -53,7 +52,8 @@ import { RecipeRoutingModule } from './recipes/recipe-routing.module';
     ReactiveFormsModule,
     // 導入自定義的Module
     RecipesModule,
-    RecipeRoutingModule
+    RecipeRoutingModule,
+    ShoppingListModule
   ],
 
   // 定義要提供注入的所有Service
