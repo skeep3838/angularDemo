@@ -12,14 +12,14 @@ import { RecipeRoutingModule } from './recipes/recipe-routing.module';
 import { ShoppingListModule } from './shopping-list/shopping-list.module';
 import { SharedModule } from './shared/shared.module';
 import { CoreModule } from './core.module';
+import { AuthModule } from './auth/auth.module';
 
 //每個Module是獨立運作的，所以無法在這裡使用app.Module設定的內容
 @NgModule({
   // 列表聲明位於位於程序中所有的Component, Pipe, Directive
   declarations: [
     AppComponent,
-    HeaderComponentComponent,
-    AuthComponent
+    HeaderComponentComponent
   ],
 
   // 將其他Module導入此Module中
@@ -31,14 +31,13 @@ import { CoreModule } from './core.module';
     HttpClientModule,
     // 保存路由配置
     AppRoutingModule,
-    FormsModule,
-    ReactiveFormsModule,
     // 導入自定義的Module
     RecipesModule,
     RecipeRoutingModule,
     ShoppingListModule,
     SharedModule,
-    CoreModule
+    CoreModule,
+    AuthModule
   ],
   // 定義哪個組件在index中可以用，通常只會有一個根組件
   bootstrap: [AppComponent]
