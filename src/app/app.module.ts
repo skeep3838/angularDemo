@@ -5,23 +5,15 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HeaderComponentComponent } from './header-component/header-component.component';
-import { ShoppingListComponent } from './shopping-list/shopping-list.component';
-import { ShoppingEditComponent } from './shopping-list/shopping-edit/shopping-edit.component';
-import { DropdownDirective } from './shared/dropdown.directive';
 import { ShoppingListService } from './shopping-list/shopping-list.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { PipeDemoComponent } from './pipe-demo/pipe-demo.component';
-import { ShortPipe } from './shared/shortPipe';
-import { FilterPipe } from './shared/filter.pipe';
 import { RecipesService } from './recipes/recipes-service';
 import { AuthComponent } from './auth/auth.component';
 import { AuthInterceptorService } from './auth/auth-interceptor.service';
-import { LoadingSpinnerComponent } from './shared/loading-spinner/loading-spinner.component';
-import { AlertComponent } from './shared/alert/alert.component';
-import { PlaceholderDirective } from './shared/placeholder/placeholder.directive';
 import { RecipesModule } from './recipes/recipes.module';
 import { RecipeRoutingModule } from './recipes/recipe-routing.module';
 import { ShoppingListModule } from './shopping-list/shopping-list.module';
+import { SharedModule } from './shared/shared.module';
 
 //每個Module是獨立運作的，所以無法在這裡使用app.Module設定的內容
 @NgModule({
@@ -29,14 +21,7 @@ import { ShoppingListModule } from './shopping-list/shopping-list.module';
   declarations: [
     AppComponent,
     HeaderComponentComponent,
-    DropdownDirective,
-    PipeDemoComponent,
-    ShortPipe,
-    FilterPipe,
-    AuthComponent,
-    LoadingSpinnerComponent,
-    AlertComponent,
-    PlaceholderDirective
+    AuthComponent
   ],
 
   // 將其他Module導入此Module中
@@ -53,7 +38,8 @@ import { ShoppingListModule } from './shopping-list/shopping-list.module';
     // 導入自定義的Module
     RecipesModule,
     RecipeRoutingModule,
-    ShoppingListModule
+    ShoppingListModule,
+    SharedModule
   ],
 
   // 定義要提供注入的所有Service
@@ -68,10 +54,6 @@ import { ShoppingListModule } from './shopping-list/shopping-list.module';
     }
   ],
   // 定義哪個組件在index中可以用，通常只會有一個根組件
-  bootstrap: [AppComponent],
-  // 允許Angular以編程的方式串間組建時，能知道該組建
-  entryComponents: [
-    AlertComponent
-  ]
+  bootstrap: [AppComponent]
 })
 export class AppModule { }
