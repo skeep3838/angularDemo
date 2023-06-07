@@ -20,6 +20,7 @@ import { LoadingSpinnerComponent } from './shared/loading-spinner/loading-spinne
 import { AlertComponent } from './shared/alert/alert.component';
 import { PlaceholderDirective } from './shared/placeholder/placeholder.directive';
 import { RecipesModule } from './recipes/recipes.module';
+import { RecipeRoutingModule } from './recipes/recipe-routing.module';
 
 //每個Module是獨立運作的，所以無法在這裡使用app.Module設定的內容
 @NgModule({
@@ -51,7 +52,8 @@ import { RecipesModule } from './recipes/recipes.module';
     FormsModule,
     ReactiveFormsModule,
     // 導入自定義的Module
-    RecipesModule
+    RecipesModule,
+    RecipeRoutingModule
   ],
 
   // 定義要提供注入的所有Service
