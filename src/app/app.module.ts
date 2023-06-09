@@ -5,8 +5,6 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HeaderComponentComponent } from './header-component/header-component.component';
-import { RecipesModule } from './recipes/recipes.module';
-import { ShoppingListModule } from './shopping-list/shopping-list.module';
 import { SharedModule } from './shared/shared.module';
 import { CoreModule } from './core.module';
 import { AuthModule } from './auth/auth.module';
@@ -29,8 +27,6 @@ import { AuthModule } from './auth/auth.module';
     // 保存路由配置
     AppRoutingModule,
     // 導入自定義的Module
-    RecipesModule,
-    ShoppingListModule,
     SharedModule,
     CoreModule,
     AuthModule

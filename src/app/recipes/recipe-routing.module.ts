@@ -10,7 +10,7 @@ import { RecipeEditComponent } from './recipe-edit/recipe-edit.component';
 import { RecipesDetailComponent } from './recipes-detail/recipes-detail.component';
 const routes: Routes = [
   {
-    path: 'recipe', component: RecipesComponent,
+    path: '', component: RecipesComponent,
     canActivate: [AuthGuardService],  // 會先判定是否授權，才有權限進入相關功能
     children: [
       // 有設定resolve: [RecipeResoliverService]，會先到RecipeResoliverService做資料處理
