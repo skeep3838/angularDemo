@@ -5,10 +5,7 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HeaderComponentComponent } from './header-component/header-component.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { AuthComponent } from './auth/auth.component';
 import { RecipesModule } from './recipes/recipes.module';
-import { RecipeRoutingModule } from './recipes/recipe-routing.module';
 import { ShoppingListModule } from './shopping-list/shopping-list.module';
 import { SharedModule } from './shared/shared.module';
 import { CoreModule } from './core.module';
@@ -33,7 +30,6 @@ import { AuthModule } from './auth/auth.module';
     AppRoutingModule,
     // 導入自定義的Module
     RecipesModule,
-    RecipeRoutingModule,
     ShoppingListModule,
     SharedModule,
     CoreModule,
