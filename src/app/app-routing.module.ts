@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
 import { PipeDemoComponent } from './pipe-demo/pipe-demo.component';
 
 const routes: Routes = [
@@ -7,11 +7,15 @@ const routes: Routes = [
   { path: '', redirectTo: '/recipe', pathMatch: 'full' },
   { path: 'pipeDemo', component: PipeDemoComponent },
   { path: 'recipe', loadChildren: () => import('./recipes/recipes.module').then(m => m.RecipesModule) },
-  {path: 'shoppingList', loadChildren:()=>import('./shopping-list/shopping-list.module').then(m=>m.ShoppingListModule)}
+  { path: 'shoppingList', loadChildren: () => import('./shopping-list/shopping-list.module').then(m => m.ShoppingListModule) }
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule
+    .forRoot(routes,
+      // 設定預載所有模組，優化lazyload造成的延遲
+      { preloadingStrategy: PreloadAllModules }
+    )],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
