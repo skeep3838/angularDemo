@@ -8,6 +8,8 @@ import { HeaderComponentComponent } from './header-component/header-component.co
 import { SharedModule } from './shared/shared.module';
 import { CoreModule } from './core.module';
 import { AuthModule } from './auth/auth.module';
+import { StoreModule } from '@ngrx/store';
+import { ShoppingListReducer } from './shopping-list/store/shopping-list.reducer';
 
 //每個Module是獨立運作的，所以無法在這裡使用app.Module設定的內容
 @NgModule({
@@ -26,6 +28,10 @@ import { AuthModule } from './auth/auth.module';
     HttpClientModule,
     // 保存路由配置
     AppRoutingModule,
+    // 告訴ngrx啟動時哪裡可以找到reducers
+    StoreModule.forRoot({
+      shoppingList: ShoppingListReducer
+    }),
     // 導入自定義的Module
     SharedModule,
     CoreModule,
