@@ -24,11 +24,6 @@ export class ShoppingListComponent implements OnInit {
 
   ngOnInit() {
     this.ingerdients = this.store.select('shoppingList');
-    // this.ingerdients = this.shoppingListService.getIngerdients();
-    // this.igChangeSub = this.shoppingListService.ingerdientsChanged
-    //   .subscribe((ingerdients: Ingerdient[]) => {
-    //     this.ingerdients = ingerdients;
-    //   });
   }
 
   // 這邊提出編輯的需求後，再由ShoppingEditComponent 監聽 shoppingListService.startedEdit

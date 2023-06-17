@@ -1,13 +1,15 @@
 import { Subscription } from 'rxjs';
 import { NgForm } from '@angular/forms';
 import { Component, OnDestroy, OnInit, ViewChild, ViewChildren } from '@angular/core';
+import { Store } from '@ngrx/store';
+
+import * as ShoppingListAction from "../store/shopping-list.action";
 import { Ingerdient } from 'src/app/shared/ingerdient.model';
 import { ShoppingListService } from '../shopping-list.service';
 
 @Component({
   selector: 'app-shopping-edit',
-  templateUrl: './shopping-edit.component.html',
-  styleUrls: ['./shopping-edit.component.css']
+  templateUrl: './shopping-edit.component.html'
 })
 export class ShoppingEditComponent implements OnInit, OnDestroy {
   // 跟<form #f="ngForm" (ngSubmit)="addItem(f)"> 做連結
@@ -19,7 +21,8 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
   editIndex: number;
   editIngerdient: Ingerdient;
 
-  constructor(private slService: ShoppingListService) { }
+  constructor(private slService: ShoppingListService,
+    private store: Store<{ shoppingList: { ingerdients: Ingerdient[] } }>) { }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
@@ -42,21 +45,21 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
 
   onSubmit(form: NgForm) {
     const value = form.value;
-    const newIngerdient = new Ingerdient(value.name, value.amount); 
+    const newIngerdient = new Ingerdient(value.name, value.amount);
     if (this.editMode) {
       this.slService.updateIngerdient(this.editIndex, newIngerdient);
     } else {
-      this.slService.onAddIngerdient(newIngerdient);
+      this.store.dispatch(new ShoppingListAction.AddIngredient(newIngerdient));
     }
     this.onClear();
   }
 
-  onClear(){
+  onClear() {
     this.slForm.reset();
     this.editMode = false;
   }
 
-  onDelete(){
+  onDelete() {
     this.slService.deleteIngerdient(this.editIndex);
     this.onClear();
   }
