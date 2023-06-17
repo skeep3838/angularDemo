@@ -3,8 +3,9 @@
         <app-shopping-edit></app-shopping-edit>
         <hr>
         <ul class="list-group">
+            <!-- for內的()=>將物件改為可觀察的 -->
             <a class="list-group-item" style="cursor: pointer"
-                *ngFor="let item of ingerdients; let i = index"
+                *ngFor="let item of (ingerdients | async).ingerdients; let i = index"
                 (click)="onEditItem(i)">
                 <p>{{item.name}}({{item.amount}})</p>
             </a>

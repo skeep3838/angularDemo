@@ -15,5 +15,8 @@ export function ShoppingListReducer(state = initState, action: ShoppingListActio
                 ...state,
                 ingredients: [...state.ingerdients, action.payload]
             }
+        // 設定初始值，不然第一次進入畫面會出錯
+        default:
+            return state;
     }
 }
