@@ -32,23 +32,25 @@ export function ShoppingListReducer(state = initState, action: ShoppingListActio
                 ingerdients: [...state.ingerdients, ...action.payload]
             };
         case ShoppingListAction.UPDATE_INGREDIENT:
-            const ingerdient = state.ingerdients[action.payload.index];
+            const ingerdient = state.ingerdients[state.editIngerdientIndex];
             const updateIngerdient = {
                 ...ingerdient,  //複製舊的資料
                 ...action.payload.ingerdient
             };
             const updateIngredients = [...state.ingerdients];
-            updateIngredients[action.payload.index] = updateIngerdient;
+            updateIngredients[state.editIngerdientIndex] = updateIngerdient;
             return {
                 ...state,
-                ingerdients: updateIngredients
+                ingerdients: updateIngredients,
+                editIngerdient: null,
+                editIngerdientIndex: -1
             };
         case ShoppingListAction.DELETE_INGREDIENT:
             return {
                 ...state,
                 // filter會檢視陣列的內容，retuen true元素保留，反之則刪除
                 ingerdients: state.ingerdients.filter((ig, igIndex) => {
-                    return igIndex != action.payload;
+                    return igIndex != state.editIngerdientIndex;
                 })
             };
         case ShoppingListAction.START_EDIT:

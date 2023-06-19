@@ -16,24 +16,21 @@ export class AddIngredient implements Action {
 
 export class AddIngredients implements Action {
     readonly type = ADD_INGREDIENTS;
-    // 要設定為public，reducer才能做取用
     constructor(public payload: Ingerdient[]) { }
 }
 
 export class UpdateIngredient implements Action {
     readonly type = UPDATE_INGREDIENT;
-    // 要設定為public，reducer才能做取用
-    constructor(public payload: { index: number, ingerdient: Ingerdient }) { }
+    constructor(public payload: { ingerdient: Ingerdient }) { }
 }
 
 export class DeleteIngredient implements Action {
     readonly type = DELETE_INGREDIENT;
-    // 要設定為public，reducer才能做取用
-    constructor(public payload: number) { }
 }
 
 export class StartEdit implements Action {
     readonly type = START_EDIT;
+    // 因為在這邊已經取得要編輯或刪除的index，所以其他功能就不需要傳遞Index
     constructor(public payload: number) { }
 }
 
