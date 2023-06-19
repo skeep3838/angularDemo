@@ -1,8 +1,11 @@
-import { Router } from '@angular/router';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { map } from 'rxjs/operators';
+
 import { AuthService } from './../auth/auth.service';
 import { DataStorageService } from './../shared/data-storage.service';
+import * as fromApp from '../store/app.reducer';
 
 @Component({
   selector: 'app-header-component',
@@ -13,14 +16,19 @@ export class HeaderComponentComponent implements OnInit, OnDestroy {
   private isAuthenticated = false;
 
   constructor(private dataStorageService: DataStorageService,
-    private authSerivce: AuthService) { }
+    private authSerivce: AuthService,
+    private store: Store<fromApp.AppState>) { }
 
   ngOnInit() {
     // 透過取得當前的User資訊判斷現在的認證狀態
-    this.userSub = this.authSerivce.user.subscribe(user => {
-      // this.isAuthenticated = !user ? false : true
-      this.isAuthenticated = !!user;
-    });
+    this.userSub = this.store.select('auth').pipe(
+      map(authState => {
+        return authState.user;
+      }))
+      .subscribe(user => {
+        // this.isAuthenticated = !user ? false : true
+        this.isAuthenticated = !!user;
+      });
   }
 
   ngOnDestroy(): void {
@@ -35,7 +43,7 @@ export class HeaderComponentComponent implements OnInit, OnDestroy {
     this.dataStorageService.fetchRecipes().subscribe();
   }
 
-  onLogout(){
+  onLogout() {
     this.authSerivce.logout();
   }
 

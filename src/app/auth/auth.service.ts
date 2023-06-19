@@ -1,9 +1,13 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, throwError } from 'rxjs';
+import { throwError } from 'rxjs';
+import { Store } from '@ngrx/store';
+
 import { catchError, tap } from 'rxjs/operators';
 import { User } from './user.model';
+import * as fromApp from '../store/app.reducer'
+import * as AuthAction from './store/auth.action';
 
 export interface AuthResponsedata {
   idToken: string,
@@ -18,13 +22,11 @@ export interface AuthResponsedata {
   providedIn: 'root'
 })
 export class AuthService {
-  // 創建一个 BehaviorSubject<> 時，
-  // 它將立即向所有已經訂閱該 Subject 的觀察者發送一個預設值。
-  // 可以使用 take() 方法開始監聽該流，並在流中的元素發生變化時向觀察者發送更新。
-  user = new BehaviorSubject<User>(null); // 當前使用者資訊
   private tokenExporationTimer: any;      // Token計時器
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(private http: HttpClient,
+    private router: Router,
+    private store: Store<fromApp.AppState>) { }
 
   // 註冊
   signup(email: string, password: string) {
@@ -59,7 +61,7 @@ export class AuthService {
 
   // 登出-將使用者資訊及token計時器清空，並重新導向登入頁面
   logout() {
-    this.user.next(null);
+    this.store.dispatch(new AuthAction.Logout());
     this.router.navigate(['/auth']);
     localStorage.clear();
 
@@ -84,12 +86,22 @@ export class AuthService {
       return;
     }
 
-    const loadUser = new User(userdata.email, userdata.id, userdata._token, new Date(userdata._tokenExpirationDate));
+    const loadUser = new User(
+      userdata.email,
+      userdata.id,
+      userdata._token,
+      new Date(userdata._tokenExpirationDate)
+    );
 
     if (loadUser.token) {
-      this.user.next(loadUser);
+      this.store.dispatch(new AuthAction.Login({
+        email: loadUser.email,
+        userId: loadUser.id,
+        token: loadUser.token,
+        expirationDate: new Date(userdata._tokenExpirationDate)
+      }));
       // 有效期限－現在時間
-      const expirationDurtion = new Date(userdata._tokenExpirationDate).getTime()-new Date().getTime();
+      const expirationDurtion = new Date(userdata._tokenExpirationDate).getTime() - new Date().getTime();
     }
   }
 
@@ -103,14 +115,21 @@ export class AuthService {
     const expirationDate = new Date(
       new Date().getTime() + +expiresIn * 1000
     );
+
     const user = new User(
       email,
       localId,
       idToken,
       expirationDate
     );
-    this.user.next(user);
-    this.autoLogout(expiresIn*1000); //依token使用期限設定超時時間
+
+    this.store.dispatch(new AuthAction.Login({
+      email: email,
+      userId: localId,
+      token: idToken,
+      expirationDate: expirationDate
+    }));
+    this.autoLogout(expiresIn * 1000); //依token使用期限設定超時時間
     localStorage.setItem('userData', JSON.stringify(user));
   }
 
