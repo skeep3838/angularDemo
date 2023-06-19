@@ -1,11 +1,10 @@
 import { Subscription } from 'rxjs';
 import { NgForm } from '@angular/forms';
-import { Component, OnDestroy, OnInit, ViewChild, ViewChildren } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
 
-import * as ShoppingListAction from "../store/shopping-list.action";
 import { Ingerdient } from 'src/app/shared/ingerdient.model';
-import { ShoppingListService } from '../shopping-list.service';
+import * as ShoppingListAction from "../store/shopping-list.action";
 import * as AppReducer from '../../store/app.reducer'
 
 @Component({
@@ -21,8 +20,7 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
   editMode = false;
   editIngerdient: Ingerdient;
 
-  constructor(private slService: ShoppingListService,
-    private store: Store<AppReducer.AppState>) { }
+  constructor(private store: Store<AppReducer.AppState>) { }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
@@ -42,26 +40,12 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
         this.editMode = false;
       }
     });
-
-    // // 取得編輯模式所需的清單資料
-    // this.subscription = this.slService.startedEdit.subscribe(
-    //   (index: number) => {
-    //     this.editMode = true;
-    //     this.editIndex = index;
-    //     this.editIngerdient = this.slService.getIngredientByIndex(this.editIndex);
-    //     this.slForm.setValue({
-    //       name: this.editIngerdient.name,
-    //       amount: this.editIngerdient.amount
-    //     });
-    //   }
-    // );
   }
 
   onSubmit(form: NgForm) {
     const value = form.value;
     const newIngerdient = new Ingerdient(value.name, value.amount);
     if (this.editMode) {
-      // this.slService.updateIngerdient(this.editIndex, newIngerdient);
       this.store.dispatch(new ShoppingListAction.UpdateIngredient({ ingerdient: newIngerdient }))
     } else {
       this.store.dispatch(new ShoppingListAction.AddIngredient(newIngerdient));
@@ -76,7 +60,6 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
   }
 
   onDelete() {
-    // this.slService.deleteIngerdient(this.editIndex);
     this.store.dispatch(new ShoppingListAction.DeleteIngredient());
     this.onClear();
   }
