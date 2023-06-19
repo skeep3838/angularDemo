@@ -6,6 +6,7 @@ import { Store } from '@ngrx/store';
 import * as ShoppingListAction from "../store/shopping-list.action";
 import { Ingerdient } from 'src/app/shared/ingerdient.model';
 import { ShoppingListService } from '../shopping-list.service';
+import * as formShoppingList from '../store/shopping-list.reducer'
 
 @Component({
   selector: 'app-shopping-edit',
@@ -22,25 +23,39 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
   editIngerdient: Ingerdient;
 
   constructor(private slService: ShoppingListService,
-    private store: Store<{ shoppingList: { ingerdients: Ingerdient[]} }>) { }
+    private store: Store<formShoppingList.AppState>) { }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+    this.store.dispatch(new ShoppingListAction.StopEdit());
   }
 
   ngOnInit() {
-    // 取得編輯模式所需的清單資料
-    this.subscription = this.slService.startedEdit.subscribe(
-      (index: number) => {
+    this.subscription = this.store.select('shoppingList').subscribe(stateData => {
+      if (stateData.editIngerdientIndex > -1) {
         this.editMode = true;
-        this.editIndex = index;
-        this.editIngerdient = this.slService.getIngredientByIndex(this.editIndex);
+        this.editIngerdient = stateData.editIngerdient;
         this.slForm.setValue({
           name: this.editIngerdient.name,
           amount: this.editIngerdient.amount
         });
+      } else {
+        this.editMode = false;
       }
-    );
+    });
+
+    // // 取得編輯模式所需的清單資料
+    // this.subscription = this.slService.startedEdit.subscribe(
+    //   (index: number) => {
+    //     this.editMode = true;
+    //     this.editIndex = index;
+    //     this.editIngerdient = this.slService.getIngredientByIndex(this.editIndex);
+    //     this.slForm.setValue({
+    //       name: this.editIngerdient.name,
+    //       amount: this.editIngerdient.amount
+    //     });
+    //   }
+    // );
   }
 
   onSubmit(form: NgForm) {
@@ -58,6 +73,7 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
   onClear() {
     this.slForm.reset();
     this.editMode = false;
+    this.store.dispatch(new ShoppingListAction.StopEdit());
   }
 
   onDelete() {

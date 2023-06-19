@@ -4,13 +4,15 @@ import { Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
 import { Ingerdient } from '../shared/ingerdient.model';
 import { ShoppingListService } from './shopping-list.service';
+import * as formShoppingList from './store/shopping-list.reducer'
+import * as ShoppingListActions from './store/shopping-list.action'
 
 @Component({
   selector: 'app-shopping-list',
   templateUrl: './shopping-list.component.html'
 })
-export class ShoppingListComponent implements OnInit {
-  ingerdients: Observable<{ingerdients: Ingerdient[] }>;
+export class ShoppingListComponent implements OnInit, OnDestroy {
+  ingerdients: Observable<{ ingerdients: Ingerdient[] }>;
   private igChangeSub: Subscription;
 
   constructor(private shoppingListService: ShoppingListService,
@@ -20,14 +22,25 @@ export class ShoppingListComponent implements OnInit {
 
     // shoppingList同StoreModule裡的Key
     // ingerdients同Reducer裡的initstate
-    private store: Store<{ shoppingList: { ingerdients: Ingerdient[] } }>) { }
+    private store: Store<formShoppingList.AppState>) { }
 
   ngOnInit() {
     this.ingerdients = this.store.select('shoppingList');
+    // this.ingerdients = this.shoppingListService.getIngerdients();
+    // this.igChangeSub = this.shoppingListService.ingerdientsChanged
+    //   .subscribe((ingerdients: Ingerdient[]) => {
+    //     this.ingerdients = ingerdients;
+    //   });
+
+  }
+
+  ngOnDestroy(): void {
+    // this.igChangeSub.unsubscribe();
   }
 
   // 這邊提出編輯的需求後，再由ShoppingEditComponent 監聽 shoppingListService.startedEdit
   onEditItem(index: number) {
-    this.shoppingListService.startedEdit.next(index);
+    // this.shoppingListService.startedEdit.next(index);
+    this.store.dispatch(new ShoppingListActions.StartEdit(index));
   }
 }
