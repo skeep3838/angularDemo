@@ -4,8 +4,8 @@ import { Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
 import { Ingerdient } from '../shared/ingerdient.model';
 import { ShoppingListService } from './shopping-list.service';
-import * as formShoppingList from './store/shopping-list.reducer'
 import * as ShoppingListActions from './store/shopping-list.action'
+import * as AppReducer from '../store/app.reducer'
 
 @Component({
   selector: 'app-shopping-list',
@@ -22,7 +22,7 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
 
     // shoppingList同StoreModule裡的Key
     // ingerdients同Reducer裡的initstate
-    private store: Store<formShoppingList.AppState>) { }
+    private store: Store<AppReducer.AppState>) { }
 
   ngOnInit() {
     this.ingerdients = this.store.select('shoppingList');

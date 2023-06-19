@@ -1,8 +1,12 @@
 import { Injectable } from '@angular/core';
+import { Store } from '@ngrx/store';
+
 import { Recipe } from './recipe-model';
 import { Ingerdient } from '../shared/ingerdient.model';
 import { ShoppingListService } from '../shopping-list/shopping-list.service';
 import { Subject } from 'rxjs';
+import * as AppReducer from '../store/app.reducer'
+import { ADD_INGREDIENTS, AddIngredients } from '../shopping-list/store/shopping-list.action';
 
 @Injectable()
 export class RecipesService {
@@ -20,7 +24,8 @@ export class RecipesService {
   // ];
   private recipes: Recipe[] = [];
 
-  constructor(private slService: ShoppingListService) { }
+  constructor(private slService: ShoppingListService,
+    private store:Store<AppReducer.AppState>) { }
 
   // 設定編輯後的食譜們
   setRecipes(recipes: Recipe[]) {
@@ -39,7 +44,8 @@ export class RecipesService {
 
   // 將食譜內的材料加入至購物車
   addIngerdientToShoppingList(ingerdient: Ingerdient[]) {
-    this.slService.addIngerdientToShoppingList(ingerdient);
+    // this.slService.addIngerdientToShoppingList(ingerdient);
+    this.store.dispatch(new AddIngredients(ingerdient));
   }
 
   updateRecipe(index: number, newRecipe: Recipe) {

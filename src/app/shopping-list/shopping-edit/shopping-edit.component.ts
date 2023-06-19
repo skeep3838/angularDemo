@@ -6,7 +6,7 @@ import { Store } from '@ngrx/store';
 import * as ShoppingListAction from "../store/shopping-list.action";
 import { Ingerdient } from 'src/app/shared/ingerdient.model';
 import { ShoppingListService } from '../shopping-list.service';
-import * as formShoppingList from '../store/shopping-list.reducer'
+import * as AppReducer from '../../store/app.reducer'
 
 @Component({
   selector: 'app-shopping-edit',
@@ -22,7 +22,7 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
   editIngerdient: Ingerdient;
 
   constructor(private slService: ShoppingListService,
-    private store: Store<formShoppingList.AppState>) { }
+    private store: Store<AppReducer.AppState>) { }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
