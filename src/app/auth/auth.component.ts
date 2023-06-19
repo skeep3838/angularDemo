@@ -1,9 +1,13 @@
 import { Component, OnInit, ComponentFactoryResolver, ViewChild, OnDestroy } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Observable, Subscription } from 'rxjs';
+import { Store } from '@ngrx/store';
+
 import { AuthResponsedata, AuthService } from './auth.service';
 import { AlertComponent } from '../shared/alert/alert.component';
 import { PlaceholderDirective } from '../shared/placeholder/placeholder.directive';
+import * as fromApp from '../store/app.reducer'
+import * as AuthAction from './store/auth.action'
 
 @Component({
   selector: 'app-auth',
@@ -17,7 +21,10 @@ export class AuthComponent implements OnInit, OnDestroy {
   @ViewChild(PlaceholderDirective, { static: false }) alertHost: PlaceholderDirective; // 錯誤訊息視圖容器
   private closeSub: Subscription;
 
-  constructor(private authService: AuthService, private componentFactoryResolver: ComponentFactoryResolver) { }
+  constructor(private authService: AuthService, 
+    private componentFactoryResolver: ComponentFactoryResolver,
+    private store: Store<fromApp.AppState>
+    ) { }
 
   ngOnDestroy(): void {
     if(this.closeSub){
@@ -26,6 +33,10 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.store.select('auth').subscribe(authState=>{
+      this.isLoading = authState.loading;
+      this.error = authState.authError;
+    })
   }
 
   onSwitchMode() {
@@ -44,22 +55,22 @@ export class AuthComponent implements OnInit, OnDestroy {
 
     this.isLoading = true;
     if (this.isLoginMode) {
-      authObs = this.authService.signin(email, passward);
+      this.store.dispatch(new AuthAction.LoginStart({email: email, passward: passward}));
     } else {
       authObs = this.authService.signup(email, passward);
     }
 
-    authObs.subscribe(
-      respData => {
-        console.log(respData);
-        this.isLoading = false;
-        this.error = '';
-      }, error => {
-        this.error = error;
-        this.showErrorAlert(error);
-        this.isLoading = false;
-      }
-    );
+    // authObs.subscribe(
+    //   respData => {
+    //     console.log(respData);
+    //     this.isLoading = false;
+    //     this.error = '';
+    //   }, error => {
+    //     this.error = error;
+    //     this.showErrorAlert(error);
+    //     this.isLoading = false;
+    //   }
+    // );
     form.reset();
   }
 
