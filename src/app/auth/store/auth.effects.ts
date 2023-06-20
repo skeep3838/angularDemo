@@ -7,6 +7,7 @@ import { of } from 'rxjs';
 
 import { AUTH_CONFIG } from '../../../environments/environment'
 import * as AuthAction from './auth.action'
+import { User } from '../user.model';
 
 export interface AuthResponsedata {
     idToken: string,
@@ -20,6 +21,33 @@ export interface AuthResponsedata {
 @Injectable()
 export class AuthEffects {
 
+    authSignup = createEffect(() => {
+        return this.actions$.pipe(
+            ofType(AuthAction.SIGNUP_START),
+            switchMap((authDate: AuthAction.SignupStart) => {
+                return this.http.post<AuthResponsedata>('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' +
+                    AUTH_CONFIG.firebaseApiKey,
+                    {
+                        email: authDate.payload.email,
+                        password: authDate.payload.password,
+                        returnSecureToken: true
+                    }).pipe(
+                        map(authRes => {
+                            return handleAuthentication(
+                                authRes.email,
+                                authRes.localId,
+                                authRes.idToken,
+                                +authRes.expiresIn
+                            )
+                        }),
+                        catchError(errResp => {
+                            return handleError(errResp);
+                        })
+                    );
+            })
+        );
+    });
+
     authLogin = createEffect(() => {
         return this.actions$.pipe(
             ofType(AuthAction.LOGIN_START),
@@ -27,46 +55,28 @@ export class AuthEffects {
                 return this.http.post<AuthResponsedata>('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' +
                     AUTH_CONFIG.firebaseApiKey, {
                     email: authDate.payload.email,
-                    password: authDate.payload.passward,
+                    password: authDate.payload.password,
                     returnSecureToken: true
                 }).pipe(
                     map(authRes => {
-                        const expirationDate = new Date(
-                            new Date().getTime() + +authRes.expiresIn * 1000
-                        );
-                        return new AuthAction.Login({
-                            email: authRes.email,
-                            userId: authRes.localId,
-                            token: authRes.idToken,
-                            expirationDate: expirationDate
-                        })
+                        return handleAuthentication(
+                            authRes.email,
+                            authRes.localId,
+                            authRes.idToken,
+                            +authRes.expiresIn
+                        )
                     }),
                     catchError(errResp => {
-                        let errMsg = '發生未知錯誤！'
-                        if (!errResp.error || !errResp.error.error) {
-                            return of(new AuthAction.LoginFail(errMsg));
-                        }
-                        switch (errResp.error.error.message) {
-                            case 'EMAIL_EXISTS':
-                                errMsg = '此信箱已註冊！';
-                                break;
-                            case 'INVALID_PASSWORD':
-                                errMsg = '密碼輸入錯誤！';
-                                break;
-                            case 'EMAIL_NOT_FOUND':
-                                errMsg = '未註冊的mail!'
-                                break;
-                        }
-                        return of(new AuthAction.LoginFail(errMsg));
+                        return handleError(errResp);
                     })
                 )
             })
         )
     });
 
-    authSuccess = createEffect(() => {
+    authRedirect = createEffect(() => {
         return this.actions$.pipe(
-            ofType(AuthAction.LOGIN),
+            ofType(AuthAction.AUTHENTICATE_SUCCESS, AuthAction.LOGOUT),
             tap(() => {
                 this.router.navigate(['/']);
             })
@@ -75,10 +85,85 @@ export class AuthEffects {
         // 而新的effect會被發射出去
     }, { dispatch: false });
 
+    autoLogout = createEffect(() => {
+        return this.actions$.pipe(
+            ofType(AuthAction.LOGOUT),
+            tap(() => {
+                localStorage.removeItem('userData');
+                this.router.navigate(['/auth']);
+            })
+        )
+    }, { dispatch: false });
+
+    autoLogin = createEffect(() => {
+        return this.actions$.pipe(
+            ofType(AuthAction.AUTO_LOGIN),
+            map(respData => {
+                const userdata = JSON.parse(localStorage.getItem('userData'));
+                if (!userdata) {
+                    return { type: 'DUMMY' };
+                }
+                const loadUser = new User(
+                    userdata.email,
+                    userdata.id,
+                    userdata._token,
+                    new Date(userdata._tokenExpirationDate)
+                );
+
+                if (loadUser.token) {
+                    return new AuthAction.AuthenticateSuccess({
+                        email: loadUser.email,
+                        userId: loadUser.id,
+                        token: loadUser.token,
+                        expirationDate: new Date(userdata._tokenExpirationDate)
+                    });
+                } 
+                return { type: 'DUMMY' };   
+            })
+        )
+    });
+
     // Actions是一個很大的觀察物件，允許訪問已分派的action 
     // 跟reducers不同的是，用ACtions不改變任何狀態，但可執行調度此類action應發生的代碼
     constructor(private actions$: Actions,
         private http: HttpClient,
         private router: Router
     ) { }
+}
+
+const handleAuthentication = (
+    email: string,
+    localId: string,
+    idToken: string,
+    expiresIn: number
+) => {
+    const expirationDate = new Date(new Date().getTime() + +expiresIn * 1000);
+    const user = new User(email, localId, idToken, expirationDate);
+    localStorage.setItem('userData', JSON.stringify(user));
+    return new AuthAction.AuthenticateSuccess({
+        email: email,
+        userId: localId,
+        token: idToken,
+        expirationDate: expirationDate
+    })
+
+}
+
+const handleError = (errResp: any) => {
+    let errMsg = '發生未知錯誤！'
+    if (!errResp.error || !errResp.error.error) {
+        return of(new AuthAction.AuthenticateFail(errMsg));
+    }
+    switch (errResp.error.error.message) {
+        case 'EMAIL_EXISTS':
+            errMsg = '此信箱已註冊！';
+            break;
+        case 'INVALID_PASSWORD':
+            errMsg = '密碼輸入錯誤！';
+            break;
+        case 'EMAIL_NOT_FOUND':
+            errMsg = '未註冊的mail!'
+            break;
+    }
+    return of(new AuthAction.AuthenticateFail(errMsg));
 }

@@ -20,6 +20,7 @@ export class AuthComponent implements OnInit, OnDestroy {
   error: string = '';
   @ViewChild(PlaceholderDirective, { static: false }) alertHost: PlaceholderDirective; // 錯誤訊息視圖容器
   private closeSub: Subscription;
+  private storeSub: Subscription;
 
   constructor(private authService: AuthService,
     private componentFactoryResolver: ComponentFactoryResolver,
@@ -30,10 +31,13 @@ export class AuthComponent implements OnInit, OnDestroy {
     if (this.closeSub) {
       this.closeSub.unsubscribe();
     }
+    if(this.storeSub){
+      this.storeSub.unsubscribe();
+    }
   }
 
   ngOnInit() {
-    this.store.select('auth').subscribe(authState => {
+    this.storeSub = this.store.select('auth').subscribe(authState => {
       this.error = authState.authError;
       this.isLoading = authState.loading;
       if (this.error) {
@@ -58,27 +62,15 @@ export class AuthComponent implements OnInit, OnDestroy {
 
     this.isLoading = true;
     if (this.isLoginMode) {
-      this.store.dispatch(new AuthAction.LoginStart({ email: email, passward: passward }));
+      this.store.dispatch(new AuthAction.LoginStart({ email: email, password: passward }));
     } else {
-      authObs = this.authService.signup(email, passward);
+     this.store.dispatch(new AuthAction.SignupStart({ email: email, password: passward }));
     }
-
-    // authObs.subscribe(
-    //   respData => {
-    //     console.log(respData);
-    //     this.isLoading = false;
-    //     this.error = '';
-    //   }, error => {
-    //     this.error = error;
-    //     this.showErrorAlert(error);
-    //     this.isLoading = false;
-    //   }
-    // );
     form.reset();
   }
 
   onHandleError() {
-    this.error = null;
+    this.store.dispatch(new AuthAction.ClearError());
   }
 
   private showErrorAlert(message: string) {
