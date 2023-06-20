@@ -1,11 +1,11 @@
 import { Actions, ofType, createEffect } from '@ngrx/effects'
 import { HttpClient } from '@angular/common/http';
-import { mergeMap, map, catchError, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { Injectable } from '@angular/core';
+import { mergeMap, map, catchError, tap, switchMap } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 import { AUTH_CONFIG } from '../../../environments/environment'
-import { of } from 'rxjs';
-import { Injectable } from '@angular/core';
 import * as AuthAction from './auth.action'
 
 export interface AuthResponsedata {
@@ -23,7 +23,7 @@ export class AuthEffects {
     authLogin = createEffect(() => {
         return this.actions$.pipe(
             ofType(AuthAction.LOGIN_START),
-            mergeMap((authDate: AuthAction.LoginStart) => {
+            switchMap((authDate: AuthAction.LoginStart) => {
                 return this.http.post<AuthResponsedata>('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' +
                     AUTH_CONFIG.firebaseApiKey, {
                     email: authDate.payload.email,
@@ -40,26 +40,29 @@ export class AuthEffects {
                             token: authRes.idToken,
                             expirationDate: expirationDate
                         })
-                    }, catchError(error => of()))
+                    }),
+                    catchError(errResp => {
+                        let errMsg = '發生未知錯誤！'
+                        if (!errResp.error || !errResp.error.error) {
+                            return of(new AuthAction.LoginFail(errMsg));
+                        }
+                        switch (errResp.error.error.message) {
+                            case 'EMAIL_EXISTS':
+                                errMsg = '此信箱已註冊！';
+                                break;
+                            case 'INVALID_PASSWORD':
+                                errMsg = '密碼輸入錯誤！';
+                                break;
+                            case 'EMAIL_NOT_FOUND':
+                                errMsg = '未註冊的mail!'
+                                break;
+                        }
+                        return of(new AuthAction.LoginFail(errMsg));
+                    })
                 )
             })
         )
     });
-
-    // @Effects()
-    // authLogin = this.actions$.pipe(
-    //     // 只允許定義一個過濾器，想在這個可觀察的管道中繼續使用哪種類型的效果
-    //     ofType(AuthAction.LOGIN_START),
-    //     // 透過一個可觀的數據取得可觀數據
-    //     switchMap((authDate: AuthAction.LoginStart) => {
-    //         return this.http.post<AuthResponsedata>('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' + AUTH_CONFIG.firebaseApiKey,
-    //             {
-    //                 email: authDate.payload.email,
-    //                 password: authDate.payload.passward,
-    //                 returnSecureToken: true
-    //             })
-    //     })
-    // );
 
     authSuccess = createEffect(() => {
         return this.actions$.pipe(
@@ -68,6 +71,8 @@ export class AuthEffects {
                 this.router.navigate(['/']);
             })
         )
+        // 不加預設為true，effect會回傳一個會回傳一個包含新effect的可觀結果
+        // 而新的effect會被發射出去
     }, { dispatch: false });
 
     // Actions是一個很大的觀察物件，允許訪問已分派的action 

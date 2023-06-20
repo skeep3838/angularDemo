@@ -21,21 +21,24 @@ export class AuthComponent implements OnInit, OnDestroy {
   @ViewChild(PlaceholderDirective, { static: false }) alertHost: PlaceholderDirective; // 錯誤訊息視圖容器
   private closeSub: Subscription;
 
-  constructor(private authService: AuthService, 
+  constructor(private authService: AuthService,
     private componentFactoryResolver: ComponentFactoryResolver,
     private store: Store<fromApp.AppState>
-    ) { }
+  ) { }
 
   ngOnDestroy(): void {
-    if(this.closeSub){
+    if (this.closeSub) {
       this.closeSub.unsubscribe();
     }
   }
 
   ngOnInit() {
-    this.store.select('auth').subscribe(authState=>{
-      this.isLoading = authState.loading;
+    this.store.select('auth').subscribe(authState => {
       this.error = authState.authError;
+      this.isLoading = authState.loading;
+      if (this.error) {
+        this.showErrorAlert(this.error);
+      }
     })
   }
 
@@ -55,7 +58,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 
     this.isLoading = true;
     if (this.isLoginMode) {
-      this.store.dispatch(new AuthAction.LoginStart({email: email, passward: passward}));
+      this.store.dispatch(new AuthAction.LoginStart({ email: email, passward: passward }));
     } else {
       authObs = this.authService.signup(email, passward);
     }
