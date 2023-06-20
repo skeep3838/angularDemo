@@ -8,6 +8,7 @@ import { of } from 'rxjs';
 import { AUTH_CONFIG } from '../../../environments/environment'
 import * as AuthAction from './auth.action'
 import { User } from '../user.model';
+import { AuthService } from '../auth.service';
 
 export interface AuthResponsedata {
     idToken: string,
@@ -32,6 +33,10 @@ export class AuthEffects {
                         password: authDate.payload.password,
                         returnSecureToken: true
                     }).pipe(
+                        // 設定超時功能
+                        tap(resData => {
+                            this.authService.setLogoutTimer(+resData.expiresIn * 1000);
+                        }),
                         map(authRes => {
                             return handleAuthentication(
                                 authRes.email,
@@ -58,6 +63,9 @@ export class AuthEffects {
                     password: authDate.payload.password,
                     returnSecureToken: true
                 }).pipe(
+                    tap(resData => {
+                        this.authService.setLogoutTimer(+resData.expiresIn * 1000);
+                    }),
                     map(authRes => {
                         return handleAuthentication(
                             authRes.email,
@@ -76,7 +84,7 @@ export class AuthEffects {
 
     authRedirect = createEffect(() => {
         return this.actions$.pipe(
-            ofType(AuthAction.AUTHENTICATE_SUCCESS, AuthAction.LOGOUT),
+            ofType(AuthAction.AUTHENTICATE_SUCCESS),
             tap(() => {
                 this.router.navigate(['/']);
             })
@@ -89,6 +97,7 @@ export class AuthEffects {
         return this.actions$.pipe(
             ofType(AuthAction.LOGOUT),
             tap(() => {
+                this.authService.clearLogoutTimer();
                 localStorage.removeItem('userData');
                 this.router.navigate(['/auth']);
             })
@@ -111,14 +120,17 @@ export class AuthEffects {
                 );
 
                 if (loadUser.token) {
+                    const expirationDate = 
+                    new Date(userdata._tokenExpirationDate).getTime()-new Date().getTime();
+                    this.authService.setLogoutTimer(expirationDate);
                     return new AuthAction.AuthenticateSuccess({
                         email: loadUser.email,
                         userId: loadUser.id,
                         token: loadUser.token,
                         expirationDate: new Date(userdata._tokenExpirationDate)
                     });
-                } 
-                return { type: 'DUMMY' };   
+                }
+                return { type: 'DUMMY' };
             })
         )
     });
@@ -127,7 +139,8 @@ export class AuthEffects {
     // 跟reducers不同的是，用ACtions不改變任何狀態，但可執行調度此類action應發生的代碼
     constructor(private actions$: Actions,
         private http: HttpClient,
-        private router: Router
+        private router: Router,
+        private authService: AuthService
     ) { }
 }
 

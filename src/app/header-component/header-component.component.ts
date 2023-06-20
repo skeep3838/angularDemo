@@ -17,7 +17,6 @@ export class HeaderComponentComponent implements OnInit, OnDestroy {
   private isAuthenticated = false;
 
   constructor(private dataStorageService: DataStorageService,
-    private authSerivce: AuthService,
     private store: Store<fromApp.AppState>) { }
 
   ngOnInit() {
@@ -27,7 +26,6 @@ export class HeaderComponentComponent implements OnInit, OnDestroy {
         return authState.user;
       }))
       .subscribe(user => {
-        // this.isAuthenticated = !user ? false : true
         this.isAuthenticated = !!user;
       });
   }

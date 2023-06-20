@@ -3,7 +3,7 @@ import { NgForm } from '@angular/forms';
 import { Observable, Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
 
-import { AuthResponsedata, AuthService } from './auth.service';
+import { AuthService } from './auth.service';
 import { AlertComponent } from '../shared/alert/alert.component';
 import { PlaceholderDirective } from '../shared/placeholder/placeholder.directive';
 import * as fromApp from '../store/app.reducer'
@@ -56,9 +56,6 @@ export class AuthComponent implements OnInit, OnDestroy {
     }
     const email = form.value.email;
     const passward = form.value.password;
-
-    // 將登入登出要做的同樣的事情統整起來
-    let authObs: Observable<AuthResponsedata>;
 
     this.isLoading = true;
     if (this.isLoginMode) {
