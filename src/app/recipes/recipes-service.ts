@@ -24,8 +24,7 @@ export class RecipesService {
   // ];
   private recipes: Recipe[] = [];
 
-  constructor(private slService: ShoppingListService,
-    private store:Store<AppReducer.AppState>) { }
+  constructor(private store:Store<AppReducer.AppState>) { }
 
   // 設定編輯後的食譜們
   setRecipes(recipes: Recipe[]) {
@@ -44,7 +43,6 @@ export class RecipesService {
 
   // 將食譜內的材料加入至購物車
   addIngerdientToShoppingList(ingerdient: Ingerdient[]) {
-    // this.slService.addIngerdientToShoppingList(ingerdient);
     this.store.dispatch(new AddIngredients(ingerdient));
   }
 
