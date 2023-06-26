@@ -2,7 +2,7 @@ import { Actions, ofType, createEffect } from '@ngrx/effects'
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Injectable } from '@angular/core';
-import { mergeMap, map, catchError, tap, switchMap } from 'rxjs/operators';
+import { map, catchError, tap, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 
 import { AUTH_CONFIG } from '../../../environments/environment'
@@ -26,8 +26,7 @@ export class AuthEffects {
         return this.actions$.pipe(
             ofType(AuthAction.SIGNUP_START),
             switchMap((authDate: AuthAction.SignupStart) => {
-                return this.http.post<AuthResponsedata>('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' +
-                    AUTH_CONFIG.firebaseApiKey,
+                return this.http.post<AuthResponsedata>(AUTH_CONFIG.authSignupURL + AUTH_CONFIG.firebaseApiKey,
                     {
                         email: authDate.payload.email,
                         password: authDate.payload.password,
@@ -57,8 +56,7 @@ export class AuthEffects {
         return this.actions$.pipe(
             ofType(AuthAction.LOGIN_START),
             switchMap((authDate: AuthAction.LoginStart) => {
-                return this.http.post<AuthResponsedata>('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' +
-                    AUTH_CONFIG.firebaseApiKey, {
+                return this.http.post<AuthResponsedata>(AUTH_CONFIG.authLogin + AUTH_CONFIG.firebaseApiKey, {
                     email: authDate.payload.email,
                     password: authDate.payload.password,
                     returnSecureToken: true
@@ -107,7 +105,7 @@ export class AuthEffects {
     autoLogin = createEffect(() => {
         return this.actions$.pipe(
             ofType(AuthAction.AUTO_LOGIN),
-            map(respData => {
+            map(() => {
                 const userdata = JSON.parse(localStorage.getItem('userData'));
                 if (!userdata) {
                     return { type: 'DUMMY' };
@@ -120,8 +118,8 @@ export class AuthEffects {
                 );
 
                 if (loadUser.token) {
-                    const expirationDate = 
-                    new Date(userdata._tokenExpirationDate).getTime()-new Date().getTime();
+                    const expirationDate =
+                        new Date(userdata._tokenExpirationDate).getTime() - new Date().getTime();
                     this.authService.setLogoutTimer(expirationDate);
                     return new AuthAction.AuthenticateSuccess({
                         email: loadUser.email,

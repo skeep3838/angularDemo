@@ -6,7 +6,7 @@ export const AUTHENTICATE_SUCCESS = '[Auth] Authenticate success';
 export const AUTHENTICATE_FAIL = '[Auth] Authenticate fail';
 export const SIGNUP_START = '[Auth] Signup start';
 export const CLEAR_ERROR = '[Auth] Clear error';
-export const AUTO_LOGIN = '[Auth] Auto login'
+export const AUTO_LOGIN = '[Auth] Auto login';
 
 export class AuthenticateSuccess implements Action {
     readonly type = AUTHENTICATE_SUCCESS;

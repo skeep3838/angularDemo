@@ -5,12 +5,12 @@ import { map, catchError, tap, take, exhaustMap } from "rxjs/operators";
 import { RecipesService } from './../recipes/recipes-service';
 import { Recipe } from '../recipes/recipe-model';
 import { Subject, throwError } from 'rxjs';
+import { RECIPE_CONFIG } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataStorageService {
-  recipeURL = 'https://angulardemo-574ac-default-rtdb.firebaseio.com/recipes.json';
 
   constructor(private http: HttpClient,
     private recipesService: RecipesService) { }
@@ -21,7 +21,7 @@ export class DataStorageService {
     const recipes = this.recipesService.getRecipes();
     // 如果Component須在response的內容做處理，可以直接return
     // return this.http.put('https://angulardemo-574ac-default-rtdb.firebaseio.com/recipes.json', recipes);
-    this.http.put(this.recipeURL, recipes).subscribe(resp => {
+    this.http.put(RECIPE_CONFIG.recipeURL, recipes).subscribe(resp => {
       console.log(resp);
       alert('已儲存!');
     }, error => {
@@ -32,7 +32,7 @@ export class DataStorageService {
   // 拉回存在雲端的食譜
   fetchRecipes() {
     // 尋找最新的使用者資訊  
-    return this.http.get<Recipe[]>(this.recipeURL)
+    return this.http.get<Recipe[]>(RECIPE_CONFIG.recipeURL)
     .pipe(
       // 將this.http.get<>()返回的資料做處理
       map(recipes => {

@@ -25,6 +25,7 @@ export function AuthReducer(state = initState, action: AuthActions.AuthActions) 
                 action.payload.token,
                 action.payload.expirationDate
             );
+            // 複製當前的狀態物件。這樣可以確保在返回新狀態時，不會修改原始的狀態物件。
             return {
                 ...state,
                 authError: null,
