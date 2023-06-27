@@ -1,4 +1,3 @@
-import { AuthService } from './auth.service';
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpParams, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -13,7 +12,7 @@ import * as fromApp from '../store/app.reducer';
 // 阻斷器 - 在送出 request之前，會先到這邊設定auth
 export class AuthInterceptorService implements HttpInterceptor {
 
-  constructor(private authService: AuthService, private store: Store<fromApp.AppState>) { }
+  constructor( private store: Store<fromApp.AppState>) { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return this.store.select('auth').pipe(

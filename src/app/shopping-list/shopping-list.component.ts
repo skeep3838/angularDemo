@@ -1,9 +1,8 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 
-import { Observable, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Ingerdient } from '../shared/ingerdient.model';
-import { ShoppingListService } from './shopping-list.service';
 import * as ShoppingListActions from './store/shopping-list.action'
 import * as AppReducer from '../store/app.reducer'
 
@@ -13,11 +12,8 @@ import * as AppReducer from '../store/app.reducer'
 })
 export class ShoppingListComponent implements OnInit {
   ingerdients: Observable<{ ingerdients: Ingerdient[] }>;
-  private igChangeSub: Subscription;
 
-  // NgRx Store 或類似的狀態管理工具會自動處理訂閱和取消訂閱。
-  // 它們會確保在元件需要資料時進行訂閱，並在元件銷毀時自動取消訂閱。
-  // 這樣就不需要手動管理訂閱和取消訂閱，減少了程式碼的複雜性。
+  // 這邊改用store控管狀態，所以移除之前使用訂閱 igChangeSub : Subscription的方法
 
   // shoppingList同StoreModule裡的Key
   // ingerdients同Reducer裡的initstate
@@ -25,7 +21,6 @@ export class ShoppingListComponent implements OnInit {
 
   ngOnInit() {
     this.ingerdients = this.store.select('shoppingList');
-
   }
 
   // 這邊提出編輯的需求後，再由ShoppingEditComponent 監聽 shoppingListService.startedEdit

@@ -3,7 +3,6 @@ import { Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { map } from 'rxjs/operators';
 
-import { AuthService } from './../auth/auth.service';
 import { DataStorageService } from './../shared/data-storage.service';
 import * as fromApp from '../store/app.reducer';
 import * as AuthAction from '../auth/store/auth.action'
