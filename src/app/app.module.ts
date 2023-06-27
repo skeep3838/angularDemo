@@ -12,6 +12,7 @@ import { CoreModule } from './core.module';
 import { AuthModule } from './auth/auth.module';
 import { appReducer } from './store/app.reducer';
 import { AuthEffects } from './auth/store/auth.effects';
+import { RecipeEffects } from './recipes/store/recipe.effects';
 
 //每個Module是獨立運作的，所以無法在這裡使用app.Module設定的內容
 @NgModule({
@@ -32,7 +33,7 @@ import { AuthEffects } from './auth/store/auth.effects';
     AppRoutingModule,
     // 告訴ngrx啟動時哪裡可以找到reducers
     StoreModule.forRoot(appReducer),
-    EffectsModule.forRoot([AuthEffects]),
+    EffectsModule.forRoot([AuthEffects, RecipeEffects]),
     // 導入自定義的Module
     SharedModule,
     CoreModule,

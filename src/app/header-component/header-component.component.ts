@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import { DataStorageService } from './../shared/data-storage.service';
 import * as fromApp from '../store/app.reducer';
 import * as AuthAction from '../auth/store/auth.action'
+import * as RecipeActions from '../recipes/store/recipe.action'
 
 @Component({
   selector: 'app-header-component',
@@ -38,7 +39,7 @@ export class HeaderComponentComponent implements OnInit, OnDestroy {
   }
 
   onFetchData() {
-    this.dataStorageService.fetchRecipes().subscribe();
+    this.store.dispatch(new RecipeActions.fetchRecipes());
   }
 
   onLogout() {
