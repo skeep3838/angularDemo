@@ -22,7 +22,7 @@ export class AuthService {
   clearLogoutTimer() {
     if (this.tokenExporationTimer) {
       clearTimeout(this.tokenExporationTimer);
-      this.clearLogoutTimer = null;
+      this.tokenExporationTimer = null;
     }
   }
 }
