@@ -1,28 +1,36 @@
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { RecipesService } from '../recipes-service';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { map } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 
 import { Recipe } from '../recipe-model';
 import * as fromApp from '../../store/app.reducer'
+import * as RecipeActions from '../store/recipe.action'
 
 @Component({
   selector: 'app-recipe-edit',
   templateUrl: './recipe-edit.component.html',
   styleUrls: ['./recipe-edit.component.css']
 })
-export class RecipeEditComponent implements OnInit {
+export class RecipeEditComponent implements OnInit, OnDestroy {
   id: number;
   editMode = false;
-
   recipeForm: FormGroup;
+  private subStore: Subscription;
 
   constructor(private avtiveRoute: ActivatedRoute,
     private recipeService: RecipesService,
     private router: Router,
     private store: Store<fromApp.AppState>) { }
+
+  ngOnDestroy(): void {
+    if(this.subStore){
+      this.subStore.unsubscribe();
+    }
+  }
 
   ngOnInit() {
     // 透過Router進來會判斷是新增還是編輯
@@ -50,7 +58,7 @@ export class RecipeEditComponent implements OnInit {
 
     // 如果是編輯模式，放入要編輯的食譜資訊
     if (this.editMode) {
-      this.store.select('recipe').pipe(map(recipeState => {
+      this.subStore = this.store.select('recipe').pipe(map(recipeState => {
         return recipeState.recipes.find((recipe, index) => {
           return index === this.id;
         })
@@ -98,9 +106,9 @@ export class RecipeEditComponent implements OnInit {
     let newRecipe: Recipe = this.recipeForm.value;
     console.log(newRecipe)
     if (this.editMode) {
-      this.recipeService.updateRecipe(this.id, newRecipe);
+      this.store.dispatch(new RecipeActions.updateRecipe({index: this.id, newRecipe: newRecipe}));
     } else {
-      this.recipeService.addRecipe(newRecipe);
+      this.store.dispatch(new RecipeActions.addRecipe(newRecipe));
     }
     // 更新完成後清空編輯食譜資訊
     this.onCancel();

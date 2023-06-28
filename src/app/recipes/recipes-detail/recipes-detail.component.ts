@@ -8,6 +8,7 @@ import { Ingerdient } from 'src/app/shared/ingerdient.model';
 import { RecipesService } from '../recipes-service';
 import * as ShoppingListAction from "../../shopping-list/store/shopping-list.action";
 import * as fromApp from '../../store/app.reducer'
+import * as RecipeActions from '../store/recipe.action'
 
 @Component({
   selector: 'app-recipes-detail',
@@ -50,7 +51,7 @@ export class RecipesDetailComponent implements OnInit {
 
 
   onDeleteRecipe() {
-    this.recipesService.deleteRecipes(this.id);
+    this.store.dispatch(new RecipeActions.deleteRecipe(this.id));
     this.router.navigate(['/recipe']);
   }
 }

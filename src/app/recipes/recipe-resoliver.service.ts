@@ -20,22 +20,21 @@ export class RecipeResoliverService implements Resolve<Recipe[]>{
     private actions$: Actions) { }
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Recipe[] | Observable<Recipe[]> | Promise<Recipe[]> {
-    this.store.dispatch(new RecipeActions.fetchRecipes());
     return this.store.select('recipe').pipe(
       take(1),
       map(recipeStatus => {
         return recipeStatus.recipes;
-      }), switchMap(recipes => {
+      }),
+      switchMap(recipes => {
         if (recipes.length === 0) {
           this.store.dispatch(new RecipeActions.fetchRecipes());
           return this.actions$.pipe(
             ofType(RecipeActions.SET_RECIPES),
             take(1)
-          )
+          );
         } else {
-          return of(recipes)
+          return of(recipes);
         }
-      })
-    );
+      }));
   }
 }

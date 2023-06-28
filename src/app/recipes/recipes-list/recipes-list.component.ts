@@ -14,11 +14,9 @@ import * as fromApp from '../../store/app.reducer'
 })
 export class RecipesListComponent implements OnInit, OnDestroy {
   recipes: Recipe[];
-  recipeDetail: Recipe;
   subscription: Subscription;  // 用來訂閱即時食譜資料
 
-  constructor(private recipesService: RecipesService,
-    private router: Router,
+  constructor(private router: Router,
     private route: ActivatedRoute,
     private store: Store<fromApp.AppState>) { }
 
@@ -26,7 +24,7 @@ export class RecipesListComponent implements OnInit, OnDestroy {
     this.subscription = this.store.select('recipe')
     .pipe(map(recipeStatus => recipeStatus.recipes))
     .subscribe((recipes: Recipe[]) => {
-      this.recipes = recipes
+      this.recipes = recipes;
     });
   }
 
