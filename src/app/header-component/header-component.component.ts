@@ -3,7 +3,6 @@ import { Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { map } from 'rxjs/operators';
 
-import { DataStorageService } from './../shared/data-storage.service';
 import * as fromApp from '../store/app.reducer';
 import * as AuthAction from '../auth/store/auth.action'
 import * as RecipeActions from '../recipes/store/recipe.action'
@@ -16,8 +15,7 @@ export class HeaderComponentComponent implements OnInit, OnDestroy {
   private userSub: Subscription;  // 訂閱當前的User資訊
   private isAuthenticated = false;
 
-  constructor(private dataStorageService: DataStorageService,
-    private store: Store<fromApp.AppState>) { }
+  constructor(private store: Store<fromApp.AppState>) { }
 
   ngOnInit() {
     // 透過取得當前的User資訊判斷現在的認證狀態
@@ -35,7 +33,7 @@ export class HeaderComponentComponent implements OnInit, OnDestroy {
   }
 
   onSaveData() {
-    this.dataStorageService.stargeRecipes();
+    this.store.dispatch(new RecipeActions.saveRecipes());
   }
 
   onFetchData() {

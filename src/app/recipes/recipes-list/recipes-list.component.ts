@@ -1,11 +1,10 @@
 import { ActivatedRoute, Router } from '@angular/router';
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { map } from 'rxjs/operators';
 
 import { Recipe } from '../recipe-model';
-import { RecipesService } from '../recipes-service';
 import * as fromApp from '../../store/app.reducer'
 
 @Component({
