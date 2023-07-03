@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 
 import { Observable } from 'rxjs';
@@ -13,12 +13,10 @@ import * as AppReducer from '../store/app.reducer'
 export class ShoppingListComponent implements OnInit {
   ingerdients: Observable<{ ingerdients: Ingerdient[] }>;
 
-  // 這邊改用store控管狀態，所以移除之前使用訂閱 igChangeSub : Subscription的方法
-
   // shoppingList同StoreModule裡的Key
   // ingerdients同Reducer裡的initstate
   constructor(private store: Store<AppReducer.AppState>) { }
-
+  
   ngOnInit() {
     this.ingerdients = this.store.select('shoppingList');
   }

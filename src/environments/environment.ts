@@ -1,9 +1,9 @@
 export const environment = {
-  production: false
+  production: false,
+  firebaseApiKey: 'AIzaSyCGIXQv3yGZPgJN1Lrx0YC046-JWzWNik0'
 };
 
 export const AUTH_CONFIG = {
-  firebaseApiKey: 'AIzaSyCGIXQv3yGZPgJN1Lrx0YC046-JWzWNik0',
   authSignupURL: 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=',
   authLogin: 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key='
 }

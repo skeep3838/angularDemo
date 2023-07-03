@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 import { map, catchError, tap, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 
-import { AUTH_CONFIG } from '../../../environments/environment'
+import { AUTH_CONFIG, environment } from '../../../environments/environment'
 import * as AuthAction from './auth.action'
 import { User } from '../user.model';
 import { AuthService } from '../auth.service';
@@ -26,7 +26,7 @@ export class AuthEffects {
         return this.actions$.pipe(
             ofType(AuthAction.SIGNUP_START),
             switchMap((authDate: AuthAction.SignupStart) => {
-                return this.http.post<AuthResponsedata>(AUTH_CONFIG.authSignupURL + AUTH_CONFIG.firebaseApiKey,
+                return this.http.post<AuthResponsedata>(AUTH_CONFIG.authSignupURL + environment.firebaseApiKey,
                     {
                         email: authDate.payload.email,
                         password: authDate.payload.password,
@@ -56,7 +56,7 @@ export class AuthEffects {
         return this.actions$.pipe(
             ofType(AuthAction.LOGIN_START),
             switchMap((authDate: AuthAction.LoginStart) => {
-                return this.http.post<AuthResponsedata>(AUTH_CONFIG.authLogin + AUTH_CONFIG.firebaseApiKey, {
+                return this.http.post<AuthResponsedata>(AUTH_CONFIG.authLogin + environment.firebaseApiKey, {
                     email: authDate.payload.email,
                     password: authDate.payload.password,
                     returnSecureToken: true
